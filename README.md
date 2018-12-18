@@ -27,3 +27,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+制作字体图标https://icomoon.io/app/#/select
+
+手动创建vue.config.js文件配置目录
