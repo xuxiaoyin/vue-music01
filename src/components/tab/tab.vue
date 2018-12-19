@@ -25,12 +25,12 @@ export default {
 @import '~common/stylus/variable'
 .tab
   height: 44px
-  line-heigth: 44px
   display: flex
   font-size: $font-size-medium
   .tab-item
     flex: 1
     text-align: center
+    line-height: 44px
     .item
       padding: 0 2px 5px
       color: $color-text-l
