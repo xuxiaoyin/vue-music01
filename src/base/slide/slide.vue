@@ -35,36 +35,47 @@ export default {
     }
   },
   mounted() {
-    this._setSliderWidth()
-    this._dots()
-    this._initSlider()
+    setTimeout(() => {
+      this._setSliderWidth()
+      this._dots()
+      this._initSlider()
+      if(this.autoplay){
+        this._autoplay()
+      }
+    },20) 
+
+    window.addEventListener('resize',()=> {
+      if(!this.slider){
+        return
+      }
+      this._setSliderWidth(true)
+      this.slider.refresh()
+    })
   },
   methods: {
-    _setSliderWidth() {
-      let children=this.$refs.slideGroup.children
+    _setSliderWidth(isResize) {
+      this.children=this.$refs.slideGroup.children
       let width=0
       let slideWidth=this.$refs.slide.clientWidth
-      for(let i=0; i<children.length; i++){
-        let child=children[i]
+      for(let i=0; i<this.children.length; i++){
+        let child=this.children[i]
         addClass(child,'slide-item')
         child.style.width=slideWidth+'px'
         width+=slideWidth
       }
-      if(this.loop){
+      if(this.loop&&!isResize){
         width+=2*slideWidth
       }
       this.$refs.slideGroup.style.width=width+'px'
     },
     _dots() {
-      let children=this.$refs.slideGroup.children
-      this.dots=new Array(children.length)
+      this.dots=new Array(this.children.length)
     },
     _initSlider() {
       this.slider = new BScroll(this.$refs.slide, {
         scrollX: true,
         scrollY: false,
         momentum: false, //惯性
-        click: true,
         snap: {
           loop: this.loop,
           threshold: 0.3,
@@ -73,9 +84,25 @@ export default {
       })
       this.slider.on('scrollEnd', this._onScrollEnd)
     },
-    _onScrollEnd(){
+    _onScrollEnd() {
       let pageIndex = this.slider.getCurrentPage().pageX
+      if(this.loop){
+        pageIndex-=1
+      }
       this.currentPageIndex = pageIndex
+      if(this.autoplay){
+        clearTimeout(this.timer)
+        this._autoplay()
+      }
+    },
+    _autoplay() {
+       let pageIndex=this.currentPageIndex+1
+      if(this.loop){
+        pageIndex+=1
+      }
+       this.timer=setTimeout(()=>{
+         this.slider.goToPage(pageIndex,0,400)
+      }, this.interval)
     }
   }
 }
