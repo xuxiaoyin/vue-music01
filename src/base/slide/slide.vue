@@ -42,15 +42,16 @@ export default {
       if(this.autoplay){
         this._autoplay()
       }
+      window.addEventListener('resize',()=> {
+        if(!this.slider){
+          return
+        }
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
     },20) 
 
-    window.addEventListener('resize',()=> {
-      if(!this.slider){
-        return
-      }
-      this._setSliderWidth(true)
-      this.slider.refresh()
-    })
+    
   },
   methods: {
     _setSliderWidth(isResize) {
@@ -104,6 +105,9 @@ export default {
          this.slider.goToPage(pageIndex,0,400)
       }, this.interval)
     }
+  },
+  destroyed() {
+    clearTimeout(this.timer)
   }
 }
 </script>
