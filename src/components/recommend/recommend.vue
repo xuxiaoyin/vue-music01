@@ -1,34 +1,36 @@
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div class="slid-wrap" v-if="recommends.length">
-        <div class="slid-content">
-          <slider>
-            <div v-for="(item,index) in recommends" :key="index">
-              <a :href="item.linkUrl">
-                <img :src="item.picUrl">
-              </a>
-            </div>
-          </slider>
+    <scroll class="recommend-content" :data="discList">
+      <div>
+        <div class="slid-wrap" v-if="recommends.length">
+          <div class="slid-content">
+            <slider>
+              <div v-for="(item,index) in recommends" :key="index">
+                <a :href="item.linkUrl">
+                  <img :src="item.picUrl">
+                </a>
+              </div>
+            </slider>
+          </div>
+        </div>
+        <div class="reconmmend-wrap">
+          <h1 class="list-title">热门歌曲推荐</h1>
+          <div class="reList">
+            <ul>
+              <li v-for="(item,index) in discList" :key="index" class="listitem">
+                <div class="pic">
+                  <img :src="item.imgurl" width="62" height="64">
+                </div>
+                <div class="text">
+                  <h1 class="name">{{item.creator.name}}</h1>
+                  <p class="dissname">{{item.dissname}}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="reconmmend-wrap">
-        <h1 class="list-title">热门歌曲推荐</h1>
-        <div class="reList">
-          <ul>
-            <li v-for="(item,index) in discList" :key="index" class="listitem">
-              <div class="pic">
-                <img :src="item.imgurl" width="62" height="64">
-              </div>
-              <div class="text">
-                <h1 class="name">{{item.creator.name}}</h1>
-                <p class="dissname">{{item.dissname}}</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
@@ -36,6 +38,7 @@
 import {getRecommend,getDiscList} from 'api/recommend.js'
 //import Slide from 'base/slide/slide'
 import Slider from 'base/slide/slider'
+import Scroll from 'base/scroll/scroll'
 const ERR_OK=0
 export default {
   data() {
@@ -65,7 +68,8 @@ export default {
     },
   },
   components: {
-    Slider
+    Slider,
+    Scroll
   }
 }
 </script>
