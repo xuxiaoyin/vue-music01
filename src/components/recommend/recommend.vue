@@ -31,6 +31,9 @@
           </div>
         </div>
       </div>
+      <div class="loading-wrap" v-if="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -40,6 +43,7 @@ import {getRecommend,getDiscList} from 'api/recommend.js'
 //import Slide from 'base/slide/slide'
 import Slider from 'base/slide/slider'
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 const ERR_OK=0
 export default {
   data() {
@@ -76,7 +80,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
@@ -133,6 +138,12 @@ export default {
             .dissname
               font-size: $font-size-medium 
               color: $color-text-l
+  .loading-wrap
+    position: absolute 
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
+
 
 
 </style>
