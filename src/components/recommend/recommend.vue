@@ -7,7 +7,8 @@
             <slider>
               <div v-for="(item,index) in recommends" :key="index">
                 <a :href="item.linkUrl">
-                  <img :src="item.picUrl" @load="Imgload">
+                  <!-- class="needclick"解决和fastclick冲突下不能点击的问题 -->
+                  <img :src="item.picUrl" @load="Imgload" class="needclick">
                 </a>
               </div>
             </slider>
@@ -19,7 +20,7 @@
             <ul>
               <li v-for="(item,index) in discList" :key="index" class="listitem">
                 <div class="pic">
-                  <img :src="item.imgurl" width="62" height="64">
+                  <img v-lazy="item.imgurl" width="62" height="64">
                 </div>
                 <div class="text">
                   <h1 class="name">{{item.creator.name}}</h1>
