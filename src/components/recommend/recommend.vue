@@ -1,13 +1,13 @@
 <template>
   <div class="recommend">
-    <scroll class="recommend-content" :data="discList">
+    <scroll class="recommend-content" :data="discList" ref="scroll">
       <div>
         <div class="slid-wrap" v-if="recommends.length">
           <div class="slid-content">
             <slider>
               <div v-for="(item,index) in recommends" :key="index">
                 <a :href="item.linkUrl">
-                  <img :src="item.picUrl">
+                  <img :src="item.picUrl" @load="Imgload">
                 </a>
               </div>
             </slider>
@@ -66,6 +66,12 @@ export default {
         }
       })
     },
+    Imgload() {
+      if(!this.isLoad) {
+        this.$refs.scroll.refresh()
+        this.isLoad=true
+      }
+    }
   },
   components: {
     Slider,
