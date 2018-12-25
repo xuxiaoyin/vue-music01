@@ -1,10 +1,11 @@
 <template>
-  <div class="siger">
-    <div></div>
+  <div class="singer">
+    <list-view :data='singer'></list-view>
   </div>
 </template>
 <script>
 import {SingerList} from 'api/singerList'
+import ListView from 'base/listview/listview'
 const ERR_OK=0
 const HOT_NAME='热门'
 const HOT_LENG=10
@@ -22,7 +23,6 @@ export default {
       SingerList().then((res)=>{
         if(res.code===ERR_OK){
           this.singer=this._normalList(res.data.list)
-          console.log(this.singer)
         }
       })
     },
@@ -71,6 +71,19 @@ export default {
       })
       return hot.concat(ret)
     }
+  },
+  components: {
+    ListView
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.singer
+  position: fixed 
+  top: 88px
+  right: 0
+  left: 0
+  bottom:0
+  overflow: hidden
+</style>
