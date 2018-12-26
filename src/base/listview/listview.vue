@@ -33,13 +33,21 @@
         </li>
       </ul>
     </div>
+    <div class="fixTitle" v-show="fixTitle" ref="fixTitle">
+      <h1 class="title">{{fixTitle}}</h1>
+    </div>
+    <div class="load-wrap" v-show="!data.length">
+      <loading></Loading>
+    </div>
   </scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
+import Loading from 'base/loading/loading'
 const TOUCH_HEIGHT=16
+const TITLE_HEIGHT=32
 export default {
   created(){
     this.touch = {}
@@ -58,12 +66,19 @@ export default {
       return this.data.map((group)=>{
         return group.title.substr(0,1)
       })
+    },
+    fixTitle(){
+      if(this.scrollY>0){
+        return
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title:''
     }
   },
   data(){
     return {
       scrollY: -1,
-      currentIndex: 0
+      currentIndex: 0,
+      diff: -1
     }
   },
   watch: {
@@ -85,11 +100,20 @@ export default {
         let height2=listHeight[i+1]
         if(-newY>=height1 && -newY<height2){
           this.currentIndex=i
+          this.diff=height2+newY
           return
         }
       }
       //最底部
        this.currentIndex=listHeight.length-2
+    },
+    diff(newVal){
+      let fixTop= (newVal>0 && newVal< TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if(this.fixTop===fixTop){
+        return
+      }
+      this.fixTop=fixTop
+      this.$refs.fixTitle.style.transform=`translate3d(0,${fixTop}px,0)`
     }
   },
   methods: {
@@ -136,7 +160,8 @@ export default {
     }
   },
   components:{
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
@@ -151,11 +176,11 @@ export default {
   ovflow: hidden
   .wrap
     .wrap-item
+      padding-bottom: 18px
       .title
         height: 32px
         line-height: 32px
         padding-left: 20px
-        margin-bottom: 18px
         background: $color-highlight-background
         font-size: $font-size-small
         color: $color-text-l
@@ -163,7 +188,7 @@ export default {
         padding-left: 30px
         .item
           font-size: 0
-          margin-bottom: 18px
+          margin-top: 18px
           .avatar
             display: inline-block
             vertical-align: top
@@ -192,5 +217,21 @@ export default {
       color: $color-text-l
       &.active
         color: $color-theme
-
+  .fixTitle
+    position: absolute 
+    width: 100%
+    top: 0
+    left: 0
+    .title
+      height: 32px
+      line-height: 32px
+      padding-left: 20px
+      background: $color-highlight-background
+      font-size: $font-size-small
+      color: $color-text-l
+  .load-wrap
+    position: absolute 
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
 </style>
