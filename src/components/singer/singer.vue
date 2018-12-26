@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-    <list-view :data='singer'></list-view>
+    <list-view :data='singer' @select="selectSinger"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -19,6 +20,11 @@ export default {
     this._singerList()
   },
   methods: {
+    selectSinger(item){
+      this.$router.push({
+        path: `/singer/${item.id}`
+      })
+    },
     _singerList() {
       SingerList().then((res)=>{
         if(res.code===ERR_OK){

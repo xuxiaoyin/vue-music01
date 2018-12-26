@@ -11,7 +11,7 @@
       <li v-for="(group,index) in data" :key="index" class="wrap-item" ref="group">
         <h1 class="title">{{group.title}}</h1>
         <ul class="list">
-          <li v-for="(item,index) in group.items" :key="index" class="item">
+          <li v-for="(item,index) in group.items" :key="index" class="item" @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar" width="52" height="52">
             <span class="text">{{item.name}}</span>
           </li>
@@ -48,6 +48,7 @@ import {getData} from 'common/js/dom'
 import Loading from 'base/loading/loading'
 const TOUCH_HEIGHT=16
 const TITLE_HEIGHT=32
+const EVENT_SELECT='select'
 export default {
   created(){
     this.touch = {}
@@ -117,6 +118,9 @@ export default {
     }
   },
   methods: {
+    selectItem(item){
+      this.$emit(EVENT_SELECT,item)
+    },
     onRightStart(e){
       let _index=getData(e.target, 'index')
       let firstTouch=e.touches[0]
