@@ -46,7 +46,7 @@
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
 import Loading from 'base/loading/loading'
-const TOUCH_HEIGHT=16
+const TOUCH_HEIGHT=14
 const TITLE_HEIGHT=32
 const EVENT_SELECT='select'
 export default {
@@ -216,7 +216,7 @@ export default {
     text-align: center
     border-radius: 10px
     .right-item
-      line-height: 16px
+      line-height: 14px
       font-size: 9px
       color: $color-text-l
       &.active

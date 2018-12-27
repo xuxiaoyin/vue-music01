@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router/index'
 import fastclick from 'fastclick' //处理点击300s延迟问题
 import VueLazyLoad from 'vue-lazyload'
+import store from './store'
 
 Vue.use(VueLazyLoad,{
   loading: require('common/images/default.png')
@@ -16,5 +17,6 @@ fastclick.attach(document.body)
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

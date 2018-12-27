@@ -5,8 +5,48 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { singerDetail } from 'api/singerList'
+import { creatSongs } from 'common/js/song'
+const ERR_OK=0
 export default {
-  
+  created() {
+    this._singerDetail()
+  },
+  data() {
+    return {
+      songs: []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'singer'
+    ])
+  },
+  methods: {
+    _singerDetail(){
+      if(!this.singer.id){
+        this.$router.push('/singer')
+        return
+      }
+      singerDetail(this.singer.id).then((res)=>{
+        if(res.code===ERR_OK){
+          this.songs = this._normalizeSongs(res.data.list)
+          console.log(this.songs)
+        }
+      })
+    },
+    _normalizeSongs(list){
+      let ret=[]
+      list.forEach((item)=> {
+        let {musicData}=item
+        if(musicData.songid && musicData.albummid){
+          ret.push(creatSongs(musicData))
+        }
+      })
+      return ret
+    }
+  }
 }
 </script>
 
