@@ -34,3 +34,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 安装jsonp
 jsonp原理：jsonp发送的不是Ajax请求，而是发送一个动态的src标签，src标签没有跨越限制，创建的src标签指向真实的服务端地址，传入一个callback函数，让服务端能够解析
+
+
+$ npm install body-parser
+var bodyParser = require('body-parser')

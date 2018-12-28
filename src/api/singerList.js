@@ -30,3 +30,6 @@ export function singerDetail(singerID){
   })
   return jsonp(url,data,options)
 }
+
+
+
