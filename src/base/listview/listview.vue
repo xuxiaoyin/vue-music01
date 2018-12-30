@@ -177,7 +177,7 @@ export default {
   position: relative
   width: 100%
   height: 100%
-  ovflow: hidden
+  overflow: hidden
   .wrap
     .wrap-item
       padding-bottom: 18px

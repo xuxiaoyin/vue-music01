@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="singer-detail"></div>
+    <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
   </transition>
 </template>
 
@@ -8,6 +8,7 @@
 import { mapGetters } from 'vuex'
 import { singerDetail } from 'api/singerList'
 import {createSongs, processSongsUrl} from 'common/js/song'
+import MusicList from 'components/music-list/music-list'
 
 const ERR_OK=0
 export default {
@@ -22,7 +23,13 @@ export default {
   computed: {
     ...mapGetters([
       'singer'
-    ])
+    ]),
+    title() {
+      return this.singer.name
+    },
+    bgImage() {
+      return this.singer.avatar
+    }
   },
   methods: {
     _singerDetail(){
@@ -48,6 +55,9 @@ export default {
       })
       return ret
     }
+  },
+  components: {
+    MusicList
   }
 }
 </script>
@@ -59,14 +69,7 @@ export default {
     transition: all 0.3s
   .fade-enter,.fade-leave-to
     transform: translate3d(100%,0,0)
-  .singer-detail
-    position: fixed 
-    z-index: 100
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    background: $color-background
+  
   
 </style>
 
