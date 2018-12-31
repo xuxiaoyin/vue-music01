@@ -29,7 +29,7 @@ export default {
 @import '~common/stylus/variable'
 
 .song-list
-  padding: 28px 30px
+  padding: 20px
   .item
     margin-bottom: 15px
     .name

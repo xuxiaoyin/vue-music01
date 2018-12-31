@@ -6,6 +6,12 @@
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgstyle" ref="bgImage">
       <div class="filter"></div>
+      <div class="play-wrap" v-show="songs.length>0" ref="paly">
+        <div class="play">
+          <i class="icon-uniE900"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
     </div>
     <div class="top-layre" ref="toplayer"></div>
     <scroll 
@@ -18,6 +24,9 @@
       <div class="song-list-wrap">
         <song-list :songs="songs"></song-list>
       </div>
+      <div class="load-warp" v-show=!songs.length>
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -25,6 +34,7 @@
 <script>
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 const TOPHEIGTH=40
 export default {
   props: {
@@ -70,7 +80,8 @@ export default {
   },
   components: {
     SongList,
-    Scroll
+    Scroll,
+    Loading
   },
   watch: {
     scrollY(newy) {
@@ -88,10 +99,12 @@ export default {
         zIndex=10
         this.$refs.bgImage.style.height=`${TOPHEIGTH}px`
         this.$refs.bgImage.style.paddingTop=0
+        this.$refs.paly.style.display='none'
       }else{
         zIndex=0
         this.$refs.bgImage.style.height=0
         this.$refs.bgImage.style.paddingTop='70%'
+        this.$refs.paly.style.display=''
       }
       this.$refs.bgImage.style.zIndex=zIndex
       this.$refs.bgImage.style['transform']=`scale(${scale})`
@@ -142,6 +155,32 @@ export default {
       width: 100%
       height: 100%
       background: $color-background-d
+    .play-wrap
+      position: absolute
+      bottom: 20px
+      left: 50%
+      transform: translateX(-50%)
+      .play
+        width: 137px
+        height: 35px
+        line-height: 35px
+        text-align: center
+        box-sizing: border-box
+        border-radius: 17px
+        border: 1px solid $color-theme
+        font-size: 0
+        .icon-uniE900
+          display: inline-block
+          font-size: 18px
+          color: $color-theme
+          margin-top: 8px
+          vertical-align: top
+        .text
+          display: inline-block
+          font-size: 13px
+          color: $color-theme
+          margin-left: 4px
+          vertical-align: top
   .list
     position: absolute
     top: 0
@@ -153,4 +192,9 @@ export default {
     width: 100%
     height: 100%
     background: $color-background
+  .load-warp
+    position: absolute 
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
 </style>
