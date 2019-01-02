@@ -22,7 +22,7 @@
       :listen-scroll="listenScroll"
       @scroll="scroll">
       <div class="song-list-wrap">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="selectItem(item,index)"></song-list>
       </div>
       <div class="load-warp" v-show=!songs.length>
         <loading></loading>
@@ -35,6 +35,7 @@
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
+import {mapActions} from 'vuex'
 const TOPHEIGTH=40
 export default {
   props: {
@@ -71,7 +72,16 @@ export default {
     },
     back() {
       this.$router.back()
-    }
+    },
+    selectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   computed: {
     bgstyle() {
