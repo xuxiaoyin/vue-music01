@@ -1,14 +1,14 @@
 <template>
   <div class="music-list">
     <div class="back" @click="back">
-      <i class="icon-1"></i>
+      <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgstyle" ref="bgImage">
       <div class="filter"></div>
       <div class="play-wrap" v-show="songs.length>0" ref="paly">
         <div class="play">
-          <i class="icon-uniE900"></i>
+          <i class="icon-play icon"></i>
           <span class="text">随机播放全部</span>
         </div>
       </div>
@@ -139,8 +139,8 @@ export default {
     z-index: 30 
     top: 0
     left: 0
-    padding: 10px 20px
-    .icon-1
+    padding: 10px 12px
+    .icon-back
       font-size: $font-size-large-x
       color: $color-theme 
   .title 
@@ -179,7 +179,7 @@ export default {
         border-radius: 17px
         border: 1px solid $color-theme
         font-size: 0
-        .icon-uniE900
+        .icon
           display: inline-block
           font-size: 18px
           color: $color-theme
