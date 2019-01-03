@@ -1,64 +1,68 @@
 <template>
   <div class="palyer" v-show="songList.length>0">
-    <div class="normal-palyer" v-show="fullScreen">
-      <div class="bg-img">
-        <img width="100%" height="100%" :src="currentSong.image">
-      </div>
-      <div class="top">
-        <div class="back" @click="back">
-          <i class="icon-back"></i>
+    <transition name="normal">
+      <div class="normal-palyer" v-show="fullScreen">
+        <div class="bg-img">
+          <img width="100%" height="100%" :src="currentSong.image">
         </div>
-        <h1 class="name" v-html="currentSong.name"></h1>
-        <h2 class="singer" v-html="currentSong.singer"></h2>
-      </div>
-      <div class="middle">
-        <div class="middle-l">
-          <div class="cd-wrap">
-            <div class="cd">
-              <img :src="currentSong.image" class="image">
+        <div class="top">
+          <div class="back" @click="back">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="name" v-html="currentSong.name"></h1>
+          <h2 class="singer" v-html="currentSong.singer"></h2>
+        </div>
+        <div class="middle">
+          <div class="middle-l">
+            <div class="cd-wrap">
+              <div class="cd">
+                <img :src="currentSong.image" class="image">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="control">
+            <div class="icon icon-left">
+              <i class="icon-random"></i>
+            </div>
+            <div class="icon icon-left">
+              <i class="icon-prev"></i>
+            </div>
+            <div class="icon icon-center">
+              <i class="icon-pause"></i>
+            </div>
+            <div class="icon icon-right">
+              <i class="icon-next"></i>
+            </div>
+            <div class="icon icon-right">
+              <i class="icon-not-favorite"></i>
             </div>
           </div>
         </div>
       </div>
-      <div class="bottom">
-        <div class="control">
-          <div class="icon icon-left">
-            <i class="icon-random"></i>
+    </transition>
+    <transition name="mini">
+      <div class="min-player" v-show="!fullScreen" @click="open">
+        <div class="left">
+          <div class="pic">
+            <img :src="currentSong.image" width="40" height="40">
           </div>
-          <div class="icon icon-left">
-            <i class="icon-prev"></i>
+          <div class="text">
+            <h1 class="name" v-html="currentSong.name"></h1>
+            <h2 class="singer" v-html="currentSong.singer"></h2>
           </div>
-          <div class="icon icon-center">
+        </div>
+        <div class="right">
+          <div class="play">
             <i class="icon-pause"></i>
           </div>
-          <div class="icon icon-right">
-            <i class="icon-next"></i>
-          </div>
-          <div class="icon icon-right">
-            <i class="icon-not-favorite"></i>
+          <div class="select">
+            <i class="icon-playlist"></i>
           </div>
         </div>
       </div>
-    </div>
-    <div class="min-player" v-show="!fullScreen" @click="open">
-      <div class="left">
-        <div class="pic">
-          <img :src="currentSong.image" width="40" height="40">
-        </div>
-        <div class="text">
-          <h1 class="name" v-html="currentSong.name"></h1>
-          <h2 class="singer" v-html="currentSong.singer"></h2>
-        </div>
-      </div>
-      <div class="right">
-        <div class="play">
-          <i class="icon-pause"></i>
-        </div>
-        <div class="select">
-          <i class="icon-playlist"></i>
-        </div>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -177,6 +181,16 @@ export default {
           text-align: right
         .icon-right
           text-align: left
+    &.normal-enter-active,&.normal-leave-active
+      transition: all 0.4s
+      .top,.bottom
+        transition: all 0.4s cubic-bezier(.86,.18,.82,1.29)
+    &.normal-enter,&.normal-leave-to
+      opacity: 0
+      .top
+        transform: translate3d(0,-100px,0)
+      .bottom
+        transform: translate3d(0,100px,0)
   .min-player
     position: fixed
     bottom: 0
@@ -215,4 +229,8 @@ export default {
         font-size: 30px
         color: $color-theme
         line-height: 62px
+    &.mini-enter-active,&.mini-leave-active
+      transition: all 0.4s
+    &.mini-enter,&.mini-leave-to
+      opacity: 0
 </style>
