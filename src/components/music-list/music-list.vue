@@ -150,7 +150,7 @@ export default {
     line-height: 40px
     text-align: center
     color: $color-text
-    font-size: $font-size-large
+    font-size: $font-size-medium-x
   .bg-image
     position: relative
     width: 100%

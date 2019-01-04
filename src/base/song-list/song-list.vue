@@ -37,10 +37,10 @@ export default {
     margin-bottom: 15px
     .name
       line-height: 25px
-      font-size: $font-size-medium-x
+      font-size: 15px
       color: $color-text
     .des
       line-height: 25px
-      font-size: $font-size-medium
+      font-size: 13px
       color: $color-text-l
 </style>

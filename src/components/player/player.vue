@@ -1,6 +1,11 @@
 <template>
   <div class="palyer" v-show="songList.length>0">
-    <transition name="normal">
+    <transition name="normal"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+    >
       <div class="normal-palyer" v-show="fullScreen">
         <div class="bg-img">
           <img width="100%" height="100%" :src="currentSong.image">
@@ -14,7 +19,7 @@
         </div>
         <div class="middle">
           <div class="middle-l">
-            <div class="cd-wrap">
+            <div class="cd-wrap" ref="cdWrap">
               <div class="cd">
                 <img :src="currentSong.image" class="image">
               </div>
@@ -68,6 +73,7 @@
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
+import animations from 'create-keyframe-animation'
 export default {
   computed: {
     ...mapGetters([
@@ -82,6 +88,64 @@ export default {
     },
     open() {
       this.setFullScreen(true)
+    },
+    enter(el,done) {
+      const {x,y,scale}=this._getPosAndScale()
+      let animation={
+        0: {
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+        },
+        60: {
+          transform: `translate3d(0,0,0) scale(1.1)`
+        },
+        100: {
+          transform: `translate3d(0,0,0) scale(1)`
+        }
+      }
+      animations.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+           easing: 'linear'
+        }
+      })
+      animations.runAnimation(this.$refs.cdWrap,'move',done)
+    },
+    afterEnter() {
+      animations.unregisterAnimation('move')
+      this.$refs.cdWrap.style.animation=''
+    },
+    leave(el,done) {
+      this.$refs.cdWrap.style.transition='all 0.4s'
+      const {x,y,scale}=this._getPosAndScale()
+      this.$refs.cdWrap.style['transform']=`translate3d(${x}px,${y}px,0) scale(${scale})`
+      this.$refs.cdWrap.style['webkitTransform']=`translate3d(${x}px,${y}px,0) scale(${scale})`
+      const timer = setTimeout(done, 400)
+      this.$refs.cdWrap.addEventListener('transitioned',()=>{
+        clearTimeout(timer)
+        done()
+      })
+    },
+    afterLeave() {
+      this.$refs.cdWrap.style.transition=''
+      this.$refs.cdWrap.style['transform']=''
+      this.$refs.cdWrap.style['webkitTransform']=''
+    },
+    _getPosAndScale() {
+      const paddingLeft=20
+      const paddingBottom=11
+      const targetWidth=40
+      const width=window.innerWidth*0.8
+      const paddingTop=80
+      const scale=targetWidth/width
+      const x=-(window.innerWidth/2-paddingLeft-targetWidth/2)
+      const y=window.innerHeight-paddingTop-width/2-paddingBottom-targetWidth/2
+      return {
+        x,
+        y,
+        scale
+      }
     },
     ...mapMutations({
       setFullScreen:'SET_FULLSCREEN'
@@ -124,10 +188,10 @@ export default {
           color: $color-theme
       .name
         line-height: 40px
-        font-size: $font-size-large
+        font-size: $font-size-medium-x
       .singer
         line-height: 20px
-        font-size: $font-size-medium-x
+        font-size: $font-size-medium
     .middle
       position: fixed
       top: 80px
@@ -215,7 +279,7 @@ export default {
         white-space: nowrap
         .name
           line-height: 22px
-          font-size: 15px 
+          font-size: 14px 
         .singer
           font-size: $font-size-small
           line-height: 12px
