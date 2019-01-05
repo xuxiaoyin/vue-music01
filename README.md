@@ -38,7 +38,3 @@ jsonp原理：jsonp发送的不是Ajax请求，而是发送一个动态的src标
 
 $ npm install body-parser
 var bodyParser = require('body-parser')
-
-
-npm install create-keyframe-animation
-var animations = require('create-keyframe-animation')

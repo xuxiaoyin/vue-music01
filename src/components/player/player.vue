@@ -20,7 +20,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrap" ref="cdWrap">
-              <div class="cd">
+              <div class="cd" :class="runCls">
                 <img :src="currentSong.image" class="image">
               </div>
             </div>
@@ -34,8 +34,8 @@
             <div class="icon icon-left">
               <i class="icon-prev"></i>
             </div>
-            <div class="icon icon-center">
-              <i class="icon-pause"></i>
+            <div class="icon icon-center" @click="toogelPlay">
+              <i :class="playCls"></i>
             </div>
             <div class="icon icon-right">
               <i class="icon-next"></i>
@@ -51,7 +51,7 @@
       <div class="min-player" v-show="!fullScreen" @click="open">
         <div class="left">
           <div class="pic">
-            <img :src="currentSong.image" width="40" height="40">
+            <img :src="currentSong.image" width="40" height="40" :class="runCls">
           </div>
           <div class="text">
             <h1 class="name" v-html="currentSong.name"></h1>
@@ -59,8 +59,8 @@
           </div>
         </div>
         <div class="right">
-          <div class="play">
-            <i class="icon-pause"></i>
+          <div class="play" @click.stop="toogelPlay">
+            <i :class="playCls"></i>
           </div>
           <div class="select">
             <i class="icon-playlist"></i>
@@ -68,22 +68,35 @@
         </div>
       </div>
     </transition>
+    <audio :src="currentSong.url" ref="audio"></audio>
   </div>
 </template>
+
+
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 export default {
   computed: {
+    playCls() {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    runCls() {
+      return this.playing ? 'play' : 'play pause'
+    },
     ...mapGetters([
       'fullScreen',
       'songList',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
   },
   methods: {
-    back(){
+    toogelPlay() {
+      this.setPlaying(!this.playing)
+    },
+    back() {
       this.setFullScreen(false)
     },
     open() {
@@ -148,8 +161,21 @@ export default {
       }
     },
     ...mapMutations({
-      setFullScreen:'SET_FULLSCREEN'
+      setFullScreen:'SET_FULLSCREEN',
+      setPlaying:'SET_PLAYING'
     })
+  },
+  watch: {
+    currentSong() {
+      this.$nextTick( ()=>{
+        this.$refs.audio.play()
+      })
+    },
+    playing(newVal) {
+      this.$nextTick( ()=>{
+        newVal ? this.$refs.audio.play(): this.$refs.audio.pause()
+      })
+    }
   }
 }
 </script>
@@ -217,6 +243,10 @@ export default {
             width: 100%
             height: 100%
             border-radius: 50%
+            &.play
+              animation: rotate 20s linear infinite 
+            &.pause
+              animation-play-state: paused
             .image
               position: absolute
               top: 0
@@ -274,6 +304,10 @@ export default {
         margin-right: 9px
         img
           border-radius: 50%
+          &.play
+            animation: rotate 10s linear infinite 
+          &.pause
+            animation-play-state: paused
       .text
         overflow: hidden
         white-space: nowrap
@@ -297,4 +331,9 @@ export default {
       transition: all 0.4s
     &.mini-enter,&.mini-leave-to
       opacity: 0
+ @keyframes rotate 
+   0%
+     transform: rotate(0)
+    100%
+      transform: rotate(360deg)
 </style>
