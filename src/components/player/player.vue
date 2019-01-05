@@ -27,18 +27,25 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="procss-wrap">
+            <div class="start">{{format(currentTime)}}</div>
+            <div class="procss">
+              <pross-bar :precent="precent" @changePercent="newPercent"></pross-bar>
+            </div>
+            <div class="end">{{format(currentSong.duration)}}</div>
+          </div>
           <div class="control">
             <div class="icon icon-left">
               <i class="icon-random"></i>
             </div>
-            <div class="icon icon-left">
-              <i class="icon-prev"></i>
+            <div class="icon icon-left" :class="disableCls">
+              <i class="icon-prev" @click="prev"></i>
             </div>
-            <div class="icon icon-center" @click="toogelPlay">
+            <div class="icon icon-center" @click="toogelPlay" :class="disableCls">
               <i :class="playCls"></i>
             </div>
-            <div class="icon icon-right">
-              <i class="icon-next"></i>
+            <div class="icon icon-right" :class="disableCls">
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon icon-right">
               <i class="icon-not-favorite"></i>
@@ -68,7 +75,7 @@
         </div>
       </div>
     </transition>
-    <audio :src="currentSong.url" ref="audio"></audio>
+    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -77,7 +84,15 @@
 <script>
 import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
+import ProssBar from 'base/pross-bar/pross-bar'
+
 export default {
+  data() {
+    return {
+      songReady: false,
+      currentTime: 0
+    }
+  },
   computed: {
     playCls() {
       return this.playing ? 'icon-pause' : 'icon-play'
@@ -85,14 +100,70 @@ export default {
     runCls() {
       return this.playing ? 'play' : 'play pause'
     },
+    disableCls() {
+      return this.songReady ? '':'disable'
+    },
+    precent() {
+      return this.currentTime/this.currentSong.duration
+    },
     ...mapGetters([
       'fullScreen',
       'songList',
       'currentSong',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   methods: {
+    newPercent(precent) {
+      this.$refs.audio.currentTime=this.currentSong.duration*precent
+      if(!this.playing) {
+        this.toogelPlay()
+      }
+    },
+    updateTime(e) {
+      this.currentTime=e.target.currentTime
+    },
+    format(val) {
+      val=val | 0
+      const minit=val/60 | 0
+      const second=this._pad(val % 60)
+      return `${minit}:${second}`
+    },
+    error() {
+      this.songReady=true //保证网络请求错误之后能正常操作
+    },
+    ready() {
+      this.songReady=true
+    },
+    prev() {
+      if(!this.songReady) {
+        return
+      }
+      let index=this.currentIndex-1
+      if(index===-1) {
+        index=this.songList.length-1
+      }
+      this.setCurrentIndex(index)
+      this.songReady=false
+      if(!this.playing) {
+        this.toogelPlay()
+      }
+    },
+    next() {
+      if(!this.songReady) {
+        return
+      }
+      let index=this.currentIndex+1
+      if(index===this.songList.length) {
+        index=0
+      }
+      this.setCurrentIndex(index)
+      this.songReady=false
+      if(!this.playing) {
+        this.toogelPlay()
+      }
+    },
     toogelPlay() {
       this.setPlaying(!this.playing)
     },
@@ -160,9 +231,18 @@ export default {
         scale
       }
     },
+    _pad(num,n = 2) {
+      let len=num.toString().length
+      while(len<n) {
+        num='0'+num
+        len++
+      }
+      return num
+    },
     ...mapMutations({
       setFullScreen:'SET_FULLSCREEN',
-      setPlaying:'SET_PLAYING'
+      setPlaying:'SET_PLAYING',
+      setCurrentIndex:'SET_CURRENTINDEX'
     })
   },
   watch: {
@@ -176,6 +256,9 @@ export default {
         newVal ? this.$refs.audio.play(): this.$refs.audio.pause()
       })
     }
+  },
+  components: {
+    ProssBar
   }
 }
 </script>
@@ -260,15 +343,34 @@ export default {
       position: absolute 
       width: 100%
       bottom: 50px
+      .procss-wrap
+        display: flex
+        height: 22px
+        margin-bottom: 14px
+        align-items: center
+        font-size: $font-size-medium
+        .start
+          flex: 1
+          text-align: right
+        .procss
+          flex: 3
+          position: relative
+          padding: 0 8px
+          height: 20px
+        .end
+          flex: 1
+          text-align: left
       .control
         display: flex
         align-items: center
         .icon
           flex: 1
           color: $color-theme
-          font-size: 30px
+          font-size: 28px
+          &.disable
+            color: $color-text-l
         .icon-center
-          font-size: 45px
+          font-size: 40px
           text-align: center
           padding: 0 20px
         .icon-left
