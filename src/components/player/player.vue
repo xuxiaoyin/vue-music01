@@ -67,7 +67,9 @@
         </div>
         <div class="right">
           <div class="play" @click.stop="toogelPlay">
-            <i :class="playCls"></i>
+            <pross-circle :radius="radius" :precent="precent">
+              <i :class="playCls" class="mini-play"></i>
+            </pross-circle>         
           </div>
           <div class="select">
             <i class="icon-playlist"></i>
@@ -85,12 +87,14 @@
 import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProssBar from 'base/pross-bar/pross-bar'
+import ProssCircle from 'base/pross-circle/pross-circle'
 
 export default {
   data() {
     return {
       songReady: false,
-      currentTime: 0
+      currentTime: 0,
+      radius: 32
     }
   },
   computed: {
@@ -258,7 +262,8 @@ export default {
     }
   },
   components: {
-    ProssBar
+    ProssBar,
+    ProssCircle
   }
 }
 </script>
@@ -389,6 +394,7 @@ export default {
         transform: translate3d(0,100px,0)
   .min-player
     position: fixed
+    width: 100%
     bottom: 0
     left: 0
     right: 0
@@ -396,10 +402,12 @@ export default {
     background: $color-highlight-background
     .left
       float: left
+      width: 62%
       padding-left: 20px
       display: flex
       align-items: center
       padding-top: 11px
+      box-sizing: border-box
       .pic
         width: 40px
         height: 40px
@@ -413,6 +421,7 @@ export default {
       .text
         overflow: hidden
         white-space: nowrap
+        text-overflow: ellipsis
         .name
           line-height: 22px
           font-size: 14px 
@@ -423,12 +432,19 @@ export default {
           color: $color-text-l        
     .right
       float: right
+      width: 38%
+      overflow: hidden
       display: flex
+      align-items: center
       .play,.select
         padding: 0 10px
-        font-size: 30px
-        color: $color-theme
-        line-height: 62px
+        font-size: 32px
+        color: $color-theme-d
+        margin-top: 15px
+        .mini-play
+          position: absolute
+          top: 0
+          left: 0
     &.mini-enter-active,&.mini-leave-active
       transition: all 0.4s
     &.mini-enter,&.mini-leave-to
