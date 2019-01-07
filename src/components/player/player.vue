@@ -35,8 +35,8 @@
             <div class="end">{{format(currentSong.duration)}}</div>
           </div>
           <div class="control">
-            <div class="icon icon-left">
-              <i class="icon-random"></i>
+            <div class="icon icon-left" @click="changeMode">
+              <i :class="modeCls"></i>
             </div>
             <div class="icon icon-left" :class="disableCls">
               <i class="icon-prev" @click="prev"></i>
@@ -77,7 +77,15 @@
         </div>
       </div>
     </transition>
-    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
+    <audio 
+      :src="currentSong.url" 
+      ref="audio" 
+      @canplay="ready" 
+      @error="error" 
+      @timeupdate="updateTime"
+      @ended="end"
+    >
+    </audio>
   </div>
 </template>
 
@@ -88,7 +96,8 @@ import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProssBar from 'base/pross-bar/pross-bar'
 import ProssCircle from 'base/pross-circle/pross-circle'
-
+import {palyMode} from 'common/js/config'
+import {getNutil} from 'common/js/nutil'
 export default {
   data() {
     return {
@@ -110,12 +119,17 @@ export default {
     precent() {
       return this.currentTime/this.currentSong.duration
     },
+    modeCls() {
+      return this.mode===palyMode.sequence ? 'icon-sequence' : this.mode===palyMode.loop ? 'icon-loop' : 'icon-random'
+    },
     ...mapGetters([
       'fullScreen',
       'songList',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode',
+      'sequenceList'
     ])
   },
   methods: {
@@ -220,6 +234,35 @@ export default {
       this.$refs.cdWrap.style['transform']=''
       this.$refs.cdWrap.style['webkitTransform']=''
     },
+    changeMode() {
+      let mode=(this.mode+1)%3
+      this.setMode(mode)
+      let list=null
+      if(mode===palyMode.random) {
+        list=getNutil(this.sequenceList)
+      }else{
+        list=this.sequenceList
+      }
+      this.setSonglist(list)
+      this.resetCurrentIndex(list)
+    },
+    resetCurrentIndex(list) {
+      let index=list.findIndex((item)=>{
+        return item.id=this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    end() {
+      if(this.mode===palyMode.loop){
+        this.loop()
+      }else{
+        this.next()
+      }     
+    },
+    loop() {
+      this.$refs.audio.currentTime=0
+      this.$refs.audio.play()
+    },
     _getPosAndScale() {
       const paddingLeft=20
       const paddingBottom=11
@@ -246,11 +289,17 @@ export default {
     ...mapMutations({
       setFullScreen:'SET_FULLSCREEN',
       setPlaying:'SET_PLAYING',
-      setCurrentIndex:'SET_CURRENTINDEX'
+      setCurrentIndex:'SET_CURRENTINDEX',
+      setMode:'SET_MODE',
+      setSonglist:'SET_SONGLIST'
     })
   },
   watch: {
-    currentSong() {
+    currentSong(newSong,oldSong) {
+      console.log(newSong,oldSong)
+      if(newSong.id===oldSong.id){
+        return
+      }
       this.$nextTick( ()=>{
         this.$refs.audio.play()
       })
@@ -301,8 +350,14 @@ export default {
           font-size: $font-size-large-x
           color: $color-theme
       .name
+        width: 75%
+        height: 40px
         line-height: 40px
-        font-size: $font-size-medium-x
+        font-size: $font-size-medium-x     
+        margin: 0 auto
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
       .singer
         line-height: 20px
         font-size: $font-size-medium

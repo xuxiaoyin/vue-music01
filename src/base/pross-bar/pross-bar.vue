@@ -33,7 +33,7 @@ export default {
         return
       }
       const daltaX= e.touches[0].pageX - this.touch.startX
-      const offsetWidth= Math.max(0,this.touch.left+daltaX)
+      const offsetWidth= Math.min(this.$refs.prossBar.clientWidth-20,Math.max(0,this.touch.left+daltaX)) 
       this._offLeft( offsetWidth )
     },
     btnTouchend() {
