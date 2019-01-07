@@ -7,7 +7,7 @@
     <div class="bg-image" :style="bgstyle" ref="bgImage">
       <div class="filter"></div>
       <div class="play-wrap" v-show="songs.length>0" ref="paly">
-        <div class="play">
+        <div class="play" @click="radomPlay">
           <i class="icon-play icon"></i>
           <span class="text">随机播放全部</span>
         </div>
@@ -79,8 +79,14 @@ export default {
         index
       })
     },
+    radomPlay() {
+      this.redomPlay({
+        list: this.songs
+      })
+    },
     ...mapActions([
-      'selectPlay'
+      'selectPlay',
+      'redomPlay'
     ])
   },
   computed: {

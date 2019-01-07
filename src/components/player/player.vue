@@ -243,12 +243,12 @@ export default {
       }else{
         list=this.sequenceList
       }
-      this.setSonglist(list)
       this.resetCurrentIndex(list)
+      this.setSonglist(list) 
     },
     resetCurrentIndex(list) {
       let index=list.findIndex((item)=>{
-        return item.id=this.currentSong.id
+        return item.id===this.currentSong.id
       })
       this.setCurrentIndex(index)
     },
@@ -296,7 +296,6 @@ export default {
   },
   watch: {
     currentSong(newSong,oldSong) {
-      console.log(newSong,oldSong)
       if(newSong.id===oldSong.id){
         return
       }

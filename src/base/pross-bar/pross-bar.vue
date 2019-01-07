@@ -1,6 +1,6 @@
 <template>
   <div class="pross-bar" ref="prossBar"  @click="prossClick">
-    <span class="sumLine"></span>
+    <span class="sumLine" ref="sumLine"></span>
     <span class="currentLine" ref="currentLine"></span>
     <span class="btn" ref="btn" 
       @touchstart.prevent="btnTouchsatrt"
@@ -41,7 +41,11 @@ export default {
       this._triggerPercent()
     },
     prossClick(e) {
-      this._offLeft(e.offsetX)
+      //点击btn获取位置不对
+      //this._offLeft(e.offsetX)
+      const rect=this.$refs.sumLine.getBoundingClientRect()
+      const offsetWidth=e.pageX-rect.left
+      this._offLeft(offsetWidth)
       this._triggerPercent()
     },
     _offLeft( offsetWidth ) {
