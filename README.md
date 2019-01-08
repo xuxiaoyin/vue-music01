@@ -42,3 +42,6 @@ var bodyParser = require('body-parser')
 
 npm install create-keyframe-animation
 var animations = require('create-keyframe-animation')
+
+js-base64
+$ npm install --save js-base64
