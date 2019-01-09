@@ -17,8 +17,13 @@
           <h1 class="name" v-html="currentSong.name"></h1>
           <h2 class="singer" v-html="currentSong.singer"></h2>
         </div>
-        <div class="middle">
-          <div class="middle-l">
+        <div class="middle"
+          @touchstart.prevent="middleTouchstart"
+          @touchmove.prevent="middleTouchmove"
+          @touchend="middleTouchend"
+          ref="middle"
+        >
+          <div class="middle-l" ref="middleL">
             <div class="cd-wrap" ref="cdWrap">
               <div class="cd" :class="runCls">
                 <img :src="currentSong.image" class="image">
@@ -154,6 +159,9 @@ export default {
       'mode',
       'sequenceList'
     ])
+  },
+  created () {
+    this.touch={}
   },
   methods: {
     newPercent(precent) {
@@ -296,12 +304,66 @@ export default {
     },
     handlerLyric(lineNum,txt) {
       this.currentLineNum=lineNum.lineNum
-      console.log(this.currentLineNum)
       if( lineNum.lineNum>5 ) {
         this.$refs.lyric.scrollToElement(this.$refs.txt[lineNum.lineNum-4],1000)
       }else{
         this.$refs.lyric.scrollTo(0,0,0)
       }
+    },
+    middleTouchstart(e) {
+      this.touch.initial=true
+      this.touch.startX=e.touches[0].pageX
+      this.touch.startY=e.touches[0].pageY
+    },
+    middleTouchmove(e) {
+      if(!this.touch.initial) {
+        return
+      }
+      const deltaX=e.touches[0].pageX-this.touch.startX
+      const deltaY=e.touches[0].pageY-this.touch.startY
+      if(Math.abs(deltaX)<Math.abs(deltaY)) {
+        return
+      }
+      const left=this.showMiddle==='cd'? 0 :-window.innerWidth
+      const offsetWidth=Math.min(0,Math.max(deltaX+left,-window.innerWidth))
+      this.touch.percent=Math.abs(offsetWidth/window.innerWidth)
+      this.$refs.lyric.$el.style['transform']=`translateX(${offsetWidth}px)`
+      this.$refs.lyric.$el.style['webkitTransform']=`translateX(${offsetWidth}px)`
+      this.$refs.lyric.$el.style.transitionDuration=0
+      this.$refs.lyric.$el.style.webkitTransitionDuration=0
+      this.$refs.middleL.style.opacity=1-this.touch.percent
+      this.$refs.middleL.style.transitionDuration=0
+      this.$refs.middleL.style.webkitTransitionDuration=0
+    },
+    middleTouchend() {
+      this.touch.initial=false
+      let offsetWidth
+      if(this.showMiddle==='cd') {
+        if(this.touch.percent>0.1) {
+          offsetWidth=-window.innerWidth
+          this.showMiddle='lyric'
+          this.$refs.middleL.style.opacity=0
+        }else{
+          offsetWidth=0
+          this.$refs.middleL.style.opacity=1
+        }
+      }else {
+        if(this.touch.percent < 0.9) {
+          offsetWidth=0
+          this.showMiddle='cd'
+          this.$refs.middleL.style.opacity=1
+        }else{
+          offsetWidth=-window.innerWidth
+          this.$refs.middleL.style.opacity=0
+        }
+      }
+      const time=300
+      this.$refs.lyric.$el.style['transform']=`translateX(${offsetWidth}px)`
+      this.$refs.lyric.$el.style['webkitTransform']=`translateX(${offsetWidth}px)`
+      this.$refs.lyric.$el.style.transitionDuration=`${time}ms`
+      this.$refs.lyric.$el.style.webkitTransitionDuration=`${time}ms`
+      this.$refs.middleL.style.transitionDuration=`${time}ms`
+      this.$refs.middleL.style.webkitTransitionDuration=`${time}ms`
     },
     _getPosAndScale() {
       const paddingLeft=20
