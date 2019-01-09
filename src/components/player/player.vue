@@ -25,8 +25,25 @@
               </div>
             </div>
           </div>
+          <scroll class="middle-r" :data="currentLyric && currentLyric.lines" ref="lyric">
+            <div class="lyric-wrap">
+              <div v-if="currentLyric">
+                <p class="text" 
+                  v-for="(item,index) in currentLyric.lines" :key="index"
+                  :class="{'current':currentLineNum===index}"
+                  ref="txt"
+                >
+                  {{item.txt}}
+                </p>
+              </div>
+            </div>       
+          </scroll>
         </div>
         <div class="bottom">
+          <div class="nar-bar">
+            <span class="nav" :class="{'active':showMiddle==='cd'}"></span>
+            <span class="nav" :class="{'active':showMiddle==='lyric'}"></span>
+          </div>
           <div class="procss-wrap">
             <div class="start">{{format(currentTime)}}</div>
             <div class="procss">
@@ -98,12 +115,18 @@ import ProssBar from 'base/pross-bar/pross-bar'
 import ProssCircle from 'base/pross-circle/pross-circle'
 import {palyMode} from 'common/js/config'
 import {getNutil} from 'common/js/nutil'
+import Lyric from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
+
 export default {
   data() {
     return {
       songReady: false,
       currentTime: 0,
-      radius: 32
+      radius: 32,
+      currentLyric: null,
+      currentLineNum: 0,
+      showMiddle: 'cd'
     }
   },
   computed: {
@@ -263,6 +286,23 @@ export default {
       this.$refs.audio.currentTime=0
       this.$refs.audio.play()
     },
+    getLyric() {
+      this.currentSong.getLyric().then( (lyric)=> {
+        this.currentLyric=new Lyric(lyric,this.handlerLyric)
+        if(this.playing) {
+          this.currentLyric.play()
+        }
+      })
+    },
+    handlerLyric(lineNum,txt) {
+      this.currentLineNum=lineNum.lineNum
+      console.log(this.currentLineNum)
+      if( lineNum.lineNum>5 ) {
+        this.$refs.lyric.scrollToElement(this.$refs.txt[lineNum.lineNum-4],1000)
+      }else{
+        this.$refs.lyric.scrollTo(0,0,0)
+      }
+    },
     _getPosAndScale() {
       const paddingLeft=20
       const paddingBottom=11
@@ -301,7 +341,7 @@ export default {
       }
       this.$nextTick( ()=>{
         this.$refs.audio.play()
-        this.currentSong.getLyric()
+        this.getLyric()
       })
     },
     playing(newVal) {
@@ -312,7 +352,8 @@ export default {
   },
   components: {
     ProssBar,
-    ProssCircle
+    ProssCircle,
+    Scroll
   }
 }
 </script>
@@ -399,11 +440,46 @@ export default {
               box-sizing: border-box
               border-radius: 50%
               border: 10px solid rgba(255, 255, 255, 0.1)
+      .middle-r
+        position: relative
+        display: inline-block
+        width: 100%
+        height: 100%
+        overflow: hidden
+        .lyric-wrap
+          width: 80%
+          margin: auto
+          top: 0
+          left: 0
+          text-align: center
+          .text
+            line-height: 32px
+            font-size: $font-size-medium
+            color: $color-text-d
+            &.current
+              color: $color-text
     .bottom
       position: absolute 
       width: 100%
       bottom: 50px
+      .nar-bar
+        width: 100%
+        height: 10px
+        text-align:center
+        margin: 15px 0
+        font-size: 0
+        .nav
+          display: inline-block
+          width: 10px
+          height: 10px
+          margin: 0 5px
+          border-radius: 5px
+          background: $color-text-d
+          &.active
+            padding: 0 5px
+            background: $color-text
       .procss-wrap
+        position: relative
         display: flex
         height: 22px
         margin-bottom: 14px

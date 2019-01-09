@@ -43,5 +43,8 @@ var bodyParser = require('body-parser')
 npm install create-keyframe-animation
 var animations = require('create-keyframe-animation')
 
-js-base64
+js-base64//歌词编码解码
 $ npm install --save js-base64
+import { Base64 } from 'js-base64';
+
+
