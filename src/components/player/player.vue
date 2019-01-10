@@ -29,6 +29,9 @@
                 <img :src="currentSong.image" class="image">
               </div>
             </div>
+            <div class="playing-lyric-wrap">
+              <div class="play-lyric">{{palyingLyric}}</div>
+            </div>
           </div>
           <scroll class="middle-r" :data="currentLyric && currentLyric.lines" ref="lyric">
             <div class="lyric-wrap">
@@ -131,7 +134,8 @@ export default {
       radius: 32,
       currentLyric: null,
       currentLineNum: 0,
-      showMiddle: 'cd'
+      showMiddle: 'cd',
+      palyingLyric: ''
     }
   },
   computed: {
@@ -165,9 +169,13 @@ export default {
   },
   methods: {
     newPercent(precent) {
-      this.$refs.audio.currentTime=this.currentSong.duration*precent
+      const currentTime=this.currentSong.duration*precent
+      this.$refs.audio.currentTime=currentTime
       if(!this.playing) {
         this.toogelPlay()
+      }
+      if(this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000)
       }
     },
     updateTime(e) {
@@ -189,32 +197,46 @@ export default {
       if(!this.songReady) {
         return
       }
-      let index=this.currentIndex-1
-      if(index===-1) {
-        index=this.songList.length-1
-      }
-      this.setCurrentIndex(index)
-      this.songReady=false
-      if(!this.playing) {
-        this.toogelPlay()
+      if(this.songList.length===1) {
+        this.loop()
+      }else {
+        let index=this.currentIndex-1
+        if(index===-1) {
+          index=this.songList.length-1
+        }
+        this.setCurrentIndex(index)
+        this.songReady=false
+        if(!this.playing) {
+          this.toogelPlay()
+        }
       }
     },
     next() {
       if(!this.songReady) {
         return
       }
-      let index=this.currentIndex+1
-      if(index===this.songList.length) {
-        index=0
-      }
-      this.setCurrentIndex(index)
-      this.songReady=false
-      if(!this.playing) {
-        this.toogelPlay()
+      if(this.songList.length===1) {
+        this.loop()
+      }else {
+        let index=this.currentIndex+1
+        if(index===this.songList.length) {
+          index=0
+        }
+        this.setCurrentIndex(index)
+        this.songReady=false
+        if(!this.playing) {
+          this.toogelPlay()
+        }
       }
     },
     toogelPlay() {
+      if(!this.songReady) {
+        return
+      }
       this.setPlaying(!this.playing)
+      if(this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     back() {
       this.setFullScreen(false)
@@ -293,6 +315,9 @@ export default {
     loop() {
       this.$refs.audio.currentTime=0
       this.$refs.audio.play()
+      if( this.currentLyric ) {
+        this.currentLyric.seek(0)
+      }
     },
     getLyric() {
       this.currentSong.getLyric().then( (lyric)=> {
@@ -300,15 +325,20 @@ export default {
         if(this.playing) {
           this.currentLyric.play()
         }
+      }).catch(()=> {
+        this.currentLyric=null
+        this.palyingLyric=''
+        this.currentLineNum=0
       })
     },
-    handlerLyric(lineNum,txt) {
+    handlerLyric(lineNum) {
       this.currentLineNum=lineNum.lineNum
       if( lineNum.lineNum>5 ) {
         this.$refs.lyric.scrollToElement(this.$refs.txt[lineNum.lineNum-4],1000)
       }else{
         this.$refs.lyric.scrollTo(0,0,0)
       }
+      this.palyingLyric=lineNum.txt
     },
     middleTouchstart(e) {
       this.touch.initial=true
@@ -401,10 +431,13 @@ export default {
       if(newSong.id===oldSong.id){
         return
       }
-      this.$nextTick( ()=>{
+      if(this.currentLyric) {
+        this.currentLyric.stop()
+      }
+      setTimeout( ()=>{
         this.$refs.audio.play()
         this.getLyric()
-      })
+      },1000)
     },
     playing(newVal) {
       this.$nextTick( ()=>{
@@ -502,6 +535,19 @@ export default {
               box-sizing: border-box
               border-radius: 50%
               border: 10px solid rgba(255, 255, 255, 0.1)
+        .playing-lyric-wrap
+          position: absolute 
+          width: 80%
+          left: 10%
+          bottom: -33px
+          height: 15px
+          overflow: hidden
+          .play-lyric
+            width: 100%
+            height: 100%
+            text-align: center
+            font-size: $font-size-medium
+            color: $color-text-l
       .middle-r
         position: relative
         display: inline-block

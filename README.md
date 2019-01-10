@@ -47,4 +47,6 @@ js-base64//歌词编码解码
 $ npm install --save js-base64
 import { Base64 } from 'js-base64';
 
+lyric-parser: 解析歌词
+
 
