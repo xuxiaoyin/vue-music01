@@ -18,7 +18,7 @@
           <h1 class="list-title">热门歌曲推荐</h1>
           <div class="reList">
             <ul>
-              <li v-for="(item,index) in discList" :key="index" class="listitem">
+              <li @click="selectItem(item)" v-for="(item,index) in discList" :key="index" class="listitem">
                 <div class="pic">
                   <img v-lazy="item.imgurl" width="62" height="64">
                 </div>
@@ -35,6 +35,7 @@
         <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -45,6 +46,7 @@ import Slider from 'base/slide/slider'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {playListMixin} from 'common/js/mixin'
+import { mapMutations } from 'vuex'
 const ERR_OK=0
 export default {
   mixins:[playListMixin],
@@ -63,6 +65,12 @@ export default {
       const bottom=songlist.length>0? '60px': ''
       this.$refs.recommend.style.bottom=bottom
       this.$refs.scroll.refresh()
+    },
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.dissid}`
+      })
+      this.setDisc(item)
     },
     _getRecommend() {
       getRecommend().then(res=> {
@@ -83,7 +91,10 @@ export default {
         this.$refs.scroll.refresh()
         this.isLoad=true
       }
-    }
+    },
+    ...mapMutations({
+      setDisc:'SET_DISC'
+    })
   },
   components: {
     Slider,
@@ -113,7 +124,6 @@ export default {
         top: 0
         left: 0
         width: 100%
-        height: 100%
     .reconmmend-wrap
       .list-title
         height: 65px

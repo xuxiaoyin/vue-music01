@@ -495,8 +495,14 @@ export default {
         white-space: nowrap
         text-overflow: ellipsis
       .singer
+        width: 80%
+        margin: 0 auto
         line-height: 20px
+        height: 20px
         font-size: $font-size-medium
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
     .middle
       position: fixed
       top: 80px
@@ -569,7 +575,7 @@ export default {
     .bottom
       position: absolute 
       width: 100%
-      bottom: 50px
+      bottom: 10px
       .nar-bar
         width: 100%
         height: 10px
