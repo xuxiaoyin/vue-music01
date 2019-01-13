@@ -22,7 +22,11 @@ export default {
       return this.topList.topTitle
     },
     bgImage() {
-      return this.topList.picUrl
+      if (this.songs.length) {
+        return this.songs[0].image
+      }else {
+        return ''
+      }
     },
     ...mapGetters([
       'topList'
@@ -42,7 +46,7 @@ export default {
           processSongsUrl(this._normalizeSongs(res.songlist)).then((songs)=> {
             this.songs=songs
           })
-          console.log(this.songs)
+          console.log(res.songlist)
         }   
       })
     },
