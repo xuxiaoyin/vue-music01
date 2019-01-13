@@ -44,7 +44,6 @@ export default {
         path: `/rank/${item.id}`
       })
       this.setTopList(item)
-      console.log(item)
     },
     handlePlayList(songlist) {
       const bottom=songlist.length>0? '60px': ''

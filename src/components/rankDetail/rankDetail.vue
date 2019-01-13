@@ -1,12 +1,62 @@
 <template>
   <transition name="fade">
-    <music-list></music-list>
+    <music-list :title="title" :bgImage="bgImage" :songs="songs"></music-list>
   </transition>
 </template>
 
 <script>
 import MusicList from 'components/music-list/music-list'
+import {getTopList} from 'api/rank'
+import {mapGetters} from 'vuex'
+import {ERR_OK} from 'api/config'
+import {createSongs,processSongsUrl} from 'common/js/song'
+
 export default {
+  data() {
+    return {
+      songs: []
+    }
+  },
+  computed: {
+    title() {
+      return this.topList.topTitle
+    },
+    bgImage() {
+      return this.topList.picUrl
+    },
+    ...mapGetters([
+      'topList'
+    ])
+  },
+  created() {
+    this._getTopList()
+  },
+  methods: {
+    _getTopList() {
+      if(!this.topList.id) {
+        this.$router.push('/rank')
+        return
+      }
+      getTopList(this.topList.id).then((res)=> {
+        if(res.code===ERR_OK) {
+          processSongsUrl(this._normalizeSongs(res.songlist)).then((songs)=> {
+            this.songs=songs
+          })
+          console.log(this.songs)
+        }   
+      })
+    },
+    _normalizeSongs(list) {
+      let ret=[]
+      list.forEach((item) => {
+        let musicData=item.data
+        if(musicData.songid && musicData.albummid){
+          ret.push(createSongs(musicData))
+        }
+      })
+      return ret
+    }
+  },
   components: {
     MusicList
   }

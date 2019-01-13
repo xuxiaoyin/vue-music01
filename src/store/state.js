@@ -8,7 +8,8 @@ const state={
   songList: [],
   sequenceList: [],
   currentIndex: -1,
-  disc:{}
+  disc:{},
+  topList:[]
 }
 
 export default state
