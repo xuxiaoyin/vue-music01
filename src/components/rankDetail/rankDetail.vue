@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <music-list :title="title" :bgImage="bgImage" :songs="songs"></music-list>
+    <music-list :title="title" :bgImage="bgImage" :songs="songs" :rank="rank"></music-list>
   </transition>
 </template>
 
@@ -14,7 +14,8 @@ import {createSongs,processSongsUrl} from 'common/js/song'
 export default {
   data() {
     return {
-      songs: []
+      songs: [],
+      rank: true
     }
   },
   computed: {
@@ -46,7 +47,6 @@ export default {
           processSongsUrl(this._normalizeSongs(res.songlist)).then((songs)=> {
             this.songs=songs
           })
-          console.log(res.songlist)
         }   
       })
     },

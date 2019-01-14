@@ -22,7 +22,7 @@
       :listen-scroll="listenScroll"
       @scroll="scroll">
       <div class="song-list-wrap">
-        <song-list :songs="songs" @select="selectItem"></song-list>
+        <song-list :songs="songs" @select="selectItem" :rank="rank"></song-list>
       </div>
       <div class="load-warp" v-show=!songs.length>
         <loading></loading>
@@ -52,6 +52,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
