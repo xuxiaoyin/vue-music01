@@ -28,6 +28,11 @@ export default {
     setquery(query) {
       this.query=query
     }
+  },
+  created() {
+    this.$watch('query',(newquery) => {
+      this.$emit('query',newquery)
+    })
   }
 }
 </script>
@@ -35,7 +40,7 @@ export default {
 <style lang="stylus" scoped>
 @import '~common/stylus/variable'
   .seach-box
-    padding: 20px 18px
+    padding: 10px 18px
     .box
       display: flex
       align-items: center

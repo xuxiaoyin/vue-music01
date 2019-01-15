@@ -9,6 +9,7 @@ import {SingerList} from 'api/singerList'
 import ListView from 'base/listview/listview'
 import { mapMutations } from 'vuex'
 import {playListMixin} from 'common/js/mixin'
+import Singer from 'common/js/singer'
 const ERR_OK=0
 const HOT_NAME='热门'
 const HOT_LENG=10
@@ -50,11 +51,12 @@ export default {
       }
       list.forEach((item,index)=>{
         if(index<HOT_LENG){
-          map.hot.items.push({
-            name: item.Fsinger_name,
-            id: item.Fsinger_mid,
-            avatar: `https://y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000`
-          })
+          map.hot.items.push(
+            new Singer({
+              id: item.Fsinger_mid,
+              name: item.Fsinger_name
+            })
+          )
         }
         const key=item.Findex
         if(!map[key]){
@@ -63,11 +65,12 @@ export default {
             items: []
           }
         }
-        map[key].items.push({
-          name: item.Fsinger_name,
-          id: item.Fsinger_mid,
-          avatar: `https://y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000`
-        })
+        map[key].items.push(
+          new Singer({
+            id: item.Fsinger_mid,
+            name: item.Fsinger_name
+          })
+        )
       })
       
       //得到有序数据
