@@ -19,7 +19,7 @@ import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {createSongs,processSongsUrl} from 'common/js/song'
 import Singer from 'common/js/singer'
-import {mapMutations} from 'vuex'
+import {mapMutations,mapActions} from 'vuex'
 const TYPE_SINGER='singer'
 const perpage=20
 
@@ -75,7 +75,6 @@ export default {
       })
     },
     selectItem(item) {
-      console.log(item)
       if(item.type===TYPE_SINGER) {
         const singer=new Singer({
           id: item.singermid,
@@ -85,6 +84,8 @@ export default {
           path: `/search/${singer.id}`
         })
         this.setSinger(singer)
+      }else{
+        this.insertSong(item)
       }
     },
     _checkMore(data) {
@@ -115,7 +116,10 @@ export default {
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
-    })
+    }),
+    ...mapActions([
+      'insertSong'
+    ])
   },
   watch: {
     query() {

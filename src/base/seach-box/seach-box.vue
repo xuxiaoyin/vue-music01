@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import {debounce} from 'common/js/nutil'
 export default {
   props: {
     placeholder: {
@@ -30,9 +31,9 @@ export default {
     }
   },
   created() {
-    this.$watch('query',(newquery) => {
+    this.$watch('query',debounce((newquery) => {
       this.$emit('query',newquery)
-    })
+    },400))
   }
 }
 </script>

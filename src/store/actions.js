@@ -31,3 +31,40 @@ export const redomPlay=function({commit},{list}){
   commit(types.SET_FULLSCREEN,true)
   commit(types.SET_PLAYING,true)
 }
+
+export const insertSong=function({commit,state},song) {
+  let songList=state.songList.slice()
+  let sequenceList=state.sequenceList.slice()
+  let currentIndex=state.currentIndex
+
+  let currentSong=songList[currentIndex]
+  let fpIndex=findIndex(songList,song)
+  currentIndex++
+  songList.splice(currentIndex,0,song)
+  if(fpIndex>-1) {
+    if(currentIndex>fpIndex) {
+      songList.splice(fpIndex,1)
+      currentIndex--
+    }else {
+      songList.splice(fpIndex+1,1)
+    }
+  }
+
+  let currentsIndex=findIndex(sequenceList,currentSong)
+  let fsIndex=findIndex(sequenceList,song)
+  currentsIndex++
+  sequenceList.splice(currentsIndex,0,song)
+  if(fsIndex>-1) {
+    if(currentsIndex>fsIndex) {
+      sequenceList.splice(fsIndex,1)
+    }else {
+      sequenceList.splice(fsIndex+1,1)
+    }
+  }
+
+  commit(types.SET_SONGLIST,songList)
+  commit(types.SET_SEQUENCELIST,sequenceList)
+  commit(types.SET_CURRENTINDEX,currentIndex)
+  commit(types.SET_FULLSCREEN,true)
+  commit(types.SET_PLAYING,true)
+}
