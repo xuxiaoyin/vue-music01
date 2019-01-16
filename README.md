@@ -49,4 +49,6 @@ import { Base64 } from 'js-base64';
 
 lyric-parser: 解析歌词
 
+good-storage   //缓存
+
 

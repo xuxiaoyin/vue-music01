@@ -27,6 +27,9 @@ const mutations= {
   },
   [types.SET_TOPLIST](state,topList) {
     state.topList=topList
+  },
+  [types.SET_SEACH_HISTORY](state,history) {
+    state.seachHistory=history
   }
 }
 

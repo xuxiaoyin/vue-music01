@@ -1,6 +1,7 @@
 import * as types from './mutation-types'
 import {getNutil} from 'common/js/nutil'
 import {palyMode} from 'common/js/config'
+import {seachHistory} from 'common/js/catch'
 
 function findIndex(list,song) {
   return list.findIndex((item) => {
@@ -67,4 +68,8 @@ export const insertSong=function({commit,state},song) {
   commit(types.SET_CURRENTINDEX,currentIndex)
   commit(types.SET_FULLSCREEN,true)
   commit(types.SET_PLAYING,true)
+}
+
+export const saveSeachHistory=function({commit},query) {
+  commit(types.SET_SEACH_HISTORY,seachHistory(query)) 
 }

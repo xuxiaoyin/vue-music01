@@ -9,6 +9,9 @@
       </li>
       <loading title="" v-show="isMore"></loading>
     </ul>
+    <div class="no-result-wrap" v-show="!isMore&&!result.length">
+      <no-result title="抱歉，暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -20,10 +23,13 @@ import Loading from 'base/loading/loading'
 import {createSongs,processSongsUrl} from 'common/js/song'
 import Singer from 'common/js/singer'
 import {mapMutations,mapActions} from 'vuex'
+import NoResult from 'base/no-result/no-result'
+import { playListMixin } from 'common/js/mixin'
 const TYPE_SINGER='singer'
 const perpage=20
 
 export default {
+  mixins: [playListMixin],
   props: {
     query:'',
     zhida: {
@@ -40,6 +46,11 @@ export default {
     }
   },
   methods: {
+    handlePlayList(result) {
+      const bottom=result.length>0? '60px': ''
+      this.$refs.suggest.$el.style.bottom=bottom
+      this.$refs.suggest.refresh()
+    },
     iconCls(item) {
       return item.type===TYPE_SINGER ? 'icon-mine' : 'icon-music'
     },
@@ -87,6 +98,7 @@ export default {
       }else{
         this.insertSong(item)
       }
+      this.$emit('select')
     },
     _checkMore(data) {
       const song=data.song
@@ -128,7 +140,8 @@ export default {
   },
   components: {
     Scroll,
-    Loading
+    Loading,
+    NoResult
   }
 }
 </script>
@@ -160,4 +173,10 @@ export default {
         text-overflow: ellipsis
         font-size: $font-size-medium
         color: $color-text-d
+  .no-result-wrap
+    position: absolute 
+    width: 100%
+    left: 0
+    top: 40%
+    transform: translateY(-50%)
 </style>

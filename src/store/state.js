@@ -1,4 +1,5 @@
 import {palyMode} from 'common/js/config'
+import {loadSearch} from 'common/js/catch'
 
 const state={
   singer:{},
@@ -9,7 +10,8 @@ const state={
   sequenceList: [],
   currentIndex: -1,
   disc:{},
-  topList:[]
+  topList:[],
+  seachHistory: loadSearch()
 }
 
 export default state
