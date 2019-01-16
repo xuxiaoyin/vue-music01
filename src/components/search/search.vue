@@ -19,7 +19,7 @@
         <div class="seach-history" v-show="seachHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="icon-clear"></span>
+            <span class="icon-clear" @click="clearSeach"></span>
           </h1>
           <div class="history">
             <history-list 
@@ -46,6 +46,7 @@ import HistoryList from 'base/history-list/history-list'
 import {getHotKey} from 'api/seach'
 import {ERR_OK} from 'api/config'
 import {mapActions,mapGetters} from 'vuex'
+
 export default {
   data() {
     return {
@@ -72,7 +73,7 @@ export default {
       this.saveSeachHistory(this.query)
     },
     deleteOne(item) {
-      console.log(item)
+      this.removeSeachOne(item)
     },
     _getHotKey() {
       getHotKey().then((res) => {
@@ -82,7 +83,9 @@ export default {
       })
     },
     ...mapActions([
-      'saveSeachHistory'
+      'saveSeachHistory',
+      'removeSeachOne',
+      'clearSeach'
     ])
   },
   components: {
