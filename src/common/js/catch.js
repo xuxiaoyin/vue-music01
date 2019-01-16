@@ -44,5 +44,6 @@ export function removeSeach(query) {
 }
 
 export function clearAll(){
-  return storage.remove (SEACH_KEY)
+  storage.remove (SEACH_KEY)
+  return []
 }
