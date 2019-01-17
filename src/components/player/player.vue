@@ -96,7 +96,7 @@
               <i :class="playCls" class="mini-play"></i>
             </pross-circle>         
           </div>
-          <div class="select">
+          <div class="select" @click="showPlayList">
             <i class="icon-playlist"></i>
           </div>
         </div>
@@ -111,6 +111,7 @@
       @ended="end"
     >
     </audio>
+    <play-list ref="playList"></play-list>
   </div>
 </template>
 
@@ -125,6 +126,7 @@ import {palyMode} from 'common/js/config'
 import {getNutil} from 'common/js/nutil'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import PlayList from 'components/play-list/play-list'
 
 export default {
   data() {
@@ -395,6 +397,9 @@ export default {
       this.$refs.middleL.style.transitionDuration=`${time}ms`
       this.$refs.middleL.style.webkitTransitionDuration=`${time}ms`
     },
+    showPlayList() {
+      this.$refs.playList.show()
+    },
     _getPosAndScale() {
       const paddingLeft=20
       const paddingBottom=11
@@ -448,7 +453,8 @@ export default {
   components: {
     ProssBar,
     ProssCircle,
-    Scroll
+    Scroll,
+    PlayList
   }
 }
 </script>
