@@ -4,38 +4,49 @@
       <div class="seach-box-wrap">
         <seach-box ref="seachBox" @query='onqueryChenge'></seach-box>
       </div>
-      <div class="hot-wrap" v-show="!query">
-        <div class="hot">
-          <h1 class="title">热门搜索</h1>
-          <ul class="hot-list">
-            <li class="item" 
-              v-for="(item,index) in hotkey" 
-              :key="index" v-html="item.k" 
-              @click="addQuery(item.k)"
-            >
-            </li>
-          </ul>
-        </div>
-        <div class="seach-history" v-show="seachHistory.length">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="icon-clear" @click="clearSeach"></span>
-          </h1>
-          <div class="history">
-            <history-list 
-              :seaches="seachHistory" 
-              @selectOne="addQuery"
-              @deleteOne="deleteOne"
-            >
-            </history-list>
+      <div class="hot-wrap" v-show="!query" ref="shortcutWrap">
+        <scroll ref="shortcut" :data="newval" class="shortcut">
+          <div>
+            <div class="hot">
+              <h1 class="title">热门搜索</h1>
+              <ul class="hot-list">
+                <li class="item" 
+                  v-for="(item,index) in hotkey" 
+                  :key="index" v-html="item.k" 
+                  @click="addQuery(item.k)"
+                >
+                </li>
+              </ul>
+            </div>
+            <div class="seach-history" v-show="seachHistory.length">
+              <h1 class="title">
+                <span class="text">搜索历史</span>
+                <span class="icon-clear" @click="showConfirm"></span>
+              </h1>
+              <div class="history">
+                <history-list 
+                  :seaches="seachHistory" 
+                  @selectOne="addQuery"
+                  @deleteOne="deleteOne"
+                >
+                </history-list>
+              </div>
+            </div>
           </div>
-        </div>
+        </scroll>
       </div>
       <div class="suggest-wrap" v-show="query">
-        <suggest :query="query" @select="saveHistory"></suggest>
+        <suggest :query="query" @select="saveHistory" ref="suggest"></suggest>
       </div>
     </div>
     <router-view></router-view>
+    <confirm
+      ref="confirm" 
+      @confirm="clearSeach"
+      text="确定要清除吗？"
+      confirmBtn="清除"
+    >
+    </confirm>
   </div>
 </template>
 
@@ -46,8 +57,12 @@ import HistoryList from 'base/history-list/history-list'
 import {getHotKey} from 'api/seach'
 import {ERR_OK} from 'api/config'
 import {mapActions,mapGetters} from 'vuex'
+import Scroll from 'base/scroll/scroll'
+import { playListMixin } from 'common/js/mixin'
+import Confirm from 'base/confirm/confirm'
 
 export default {
+  mixins: [playListMixin],
   data() {
     return {
       hotkey: [],
@@ -58,11 +73,22 @@ export default {
     this._getHotKey()
   },
   computed: {
+    newval() {
+      return this.hotkey.concat(this.seachHistory)
+    },
     ...mapGetters([
       'seachHistory'
     ])
   },
   methods: {
+    handlePlayList(songList) {
+      const bottom=songList.length>0? '60px': ''
+      this.$refs.shortcutWrap.style.bottom=bottom
+      this.$refs.shortcut.refresh()
+
+      this.$refs.suggest.$el.style.bottom=bottom
+      this.$refs.suggest.refresh()
+    },
     addQuery(query) {
       this.$refs.seachBox.setquery(query)
     },
@@ -74,6 +100,9 @@ export default {
     },
     deleteOne(item) {
       this.removeSeachOne(item)
+    },
+    showConfirm() {
+      this.$refs.confirm.show()
     },
     _getHotKey() {
       getHotKey().then((res) => {
@@ -91,8 +120,19 @@ export default {
   components: {
     SeachBox,
     Suggest,
-    HistoryList
-  }
+    HistoryList,
+    Scroll,
+    Confirm
+  },
+  watch: {
+    query(newQuery) {
+      if (!newQuery) {
+        setTimeout(() => {
+          this.$refs.shortcut.refresh()
+        }, 20)
+      }
+    }
+  },
 }
 </script>
 
@@ -106,32 +146,40 @@ export default {
   bottom: 0
   overflow: hidden
   .hot-wrap
+    position: absolute 
+    width: 100%
+    top: 62px
+    bottom: 0
+    box-sizing: border-box
     padding: 0 18px
-    .hot
-      .title
-        line-height: 38px
-        font-size: $font-size-medium
-        color: $color-text-l
-      .hot-list
-        font-size: 0
-        .item
-          display: inline-block
-          padding: 6px 10px
+    .shortcut
+      height: 100%
+      overflow: hidden
+      .hot
+        .title
+          line-height: 38px
           font-size: $font-size-medium
-          background: $color-highlight-background
-          margin: 5px 10px 5px 0
-          border-radius: 4px
-          color: $color-text-d
-    .seach-history
-      margin-top: 10px
-      color: $color-text-l
-      .title
-        height: 42px
-        line-height: 42px
-        font-size: $font-size-medium
-        .icon-clear
-          float: right
+          color: $color-text-l
+        .hot-list
+          font-size: 0
+          .item
+            display: inline-block
+            padding: 6px 10px
+            font-size: $font-size-medium
+            background: $color-highlight-background
+            margin: 5px 10px 5px 0
+            border-radius: 4px
+            color: $color-text-d
+      .seach-history
+        margin-top: 10px
+        color: $color-text-l
+        .title
+          height: 42px
           line-height: 42px
-          font-size: $font-size-small
+          font-size: $font-size-medium
+          .icon-clear
+            float: right
+            line-height: 42px
+            font-size: $font-size-small
 </style>
 

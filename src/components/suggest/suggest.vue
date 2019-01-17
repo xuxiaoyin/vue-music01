@@ -24,12 +24,10 @@ import {createSongs,processSongsUrl} from 'common/js/song'
 import Singer from 'common/js/singer'
 import {mapMutations,mapActions} from 'vuex'
 import NoResult from 'base/no-result/no-result'
-import { playListMixin } from 'common/js/mixin'
 const TYPE_SINGER='singer'
 const perpage=20
 
 export default {
-  mixins: [playListMixin],
   props: {
     query:'',
     zhida: {
@@ -46,9 +44,7 @@ export default {
     }
   },
   methods: {
-    handlePlayList(result) {
-      const bottom=result.length>0? '60px': ''
-      this.$refs.suggest.$el.style.bottom=bottom
+    refresh() {
       this.$refs.suggest.refresh()
     },
     iconCls(item) {

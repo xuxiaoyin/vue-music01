@@ -18,11 +18,9 @@ function changeVal(arr,val,func,maxLen) {
 
 export function seachHistory(query) {
   let arr=storage.get(SEACH_KEY,[])
-  if(query) {
-    changeVal(arr,query,(item)=>{
-      return item===query
-    },MAX_LENGTH)
-  }
+  changeVal(arr,query,(item)=>{
+    return item===query
+  },MAX_LENGTH)
   storage.set(SEACH_KEY,arr)
   return arr
 }
