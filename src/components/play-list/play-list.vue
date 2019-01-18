@@ -4,25 +4,28 @@
       <div class="play-list" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon icon-sequence"></i>
-            <span class="text">随机播放</span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <i class="icon" :class="modeCls" @click="changeMode"></i>
+            <span class="text">{{modeText}}</span>
+            <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <div class="content">
-          <ul class="list">
-            <li class="item">
-              <i class="current"></i>
-              <span class="text"></span>
+        <scroll class="content" ref="content" :data="sequenceList">
+          <transition-group class="list" ref="list" tag="ul" name="list">
+            <li class="item" 
+              v-for="(item,index) in sequenceList" :key="item.id"
+              @click="selectItem(item,index)"
+            >
+              <i class="current" :class="getIconCls(item)"></i>
+              <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon icon-delete"></i>
               </span>
             </li>
-          </ul>
-        </div>
+          </transition-group>
+        </scroll>
         <div class="bottom">
           <div class="add">
             <i class="icon-add"></i>
@@ -31,24 +34,99 @@
           <div class="close" @click="hide">关闭</div>
         </div>
       </div>
+      <confirm ref="confirm" text="是否清空播放列表" confirmBtn="清空" @confirm="clearList"></confirm>
     </div>
   </transition>
 </template>
 
 <script>
-export default { 
+import {mapGetters,mapMutations,mapActions} from 'vuex'
+import Scroll from 'base/scroll/scroll'
+import {palyMode} from 'common/js/config'
+import Confirm from 'base/confirm/confirm'
+import {playerMixin} from 'common/js/mixin'
+
+export default {
+  mixins: [playerMixin], 
   data() {
     return {
       listflag: false
     }
   },
+  computed: {
+    modeText() {
+      return this.mode===palyMode.random ? '随机播放' : this.mode===palyMode.sequence ? '顺序播放' : '单曲循环'
+    }
+  },
   methods: {
     show() {
       this.listflag=true
+      setTimeout(()=> {
+        this.$refs.content.refresh()
+        this.scrollToCurrent(this.currentSong)
+      },20)
     },
     hide() {
       this.listflag=false
-    }
+    },
+    getIconCls(item) {
+      if(item.id===this.currentSong.id) {
+        return 'icon-play'
+      }else {
+        return ''
+      }
+    },
+    selectItem(item,index) {
+      if( palyMode.random===this.mode) {
+        index=this.songList.findIndex( (song)=>{
+          return song.id===item.id
+        })
+      }
+      this.setCurrentIndex(index)
+      this.setPlaying(true)
+    },
+    scrollToCurrent(current) {
+      const index=this.sequenceList.findIndex((song)=> {
+        return current.id===song.id
+      })
+      this.$refs.content.scrollToElement(this.$refs.list.$el.children[index],300)
+    },
+    deleteOne(item) {
+      this.deletetSong(item)
+      if(!this.songList.length){
+        this.hide()
+      }
+    },
+    showConfirm() {
+      this.$refs.confirm.show()
+    },
+    clearList() {
+      this.deleteList()
+      this.hide()
+    },
+    ...mapMutations({
+      setCurrentIndex:'SET_CURRENTINDEX',
+      setPlaying:'SET_PLAYING'
+    }),
+    ...mapActions([
+      'deletetSong',
+      'deleteList'
+    ])
+  },
+  components: {
+    Scroll,
+    Confirm
+  },
+  watch: {
+    currentSong(newsong,oldsong) {
+      if(newsong.id===oldsong.id || !this.listflag ) {
+        return
+      }
+      setTimeout(()=> {
+        this.scrollToCurrent(newsong)
+      },20)
+    },
+
   }
 }
 </script>
@@ -109,9 +187,9 @@ export default {
           height: 40px
           padding: 0 30px 0 20px
           overflow: hidden
-          &.list-fadeIn-enter-active,&.list-fadeIn-leave-active
+          &.list-enter-active,&.list-leave-active
             transition: all 0.1s
-          &.list-fadeIn-enter,.list-fadeIn-leave-to
+          &.list-enter,&.list-leave-to
             height: 0
           .current
             flex: 0 0 20px
@@ -120,9 +198,11 @@ export default {
             color: $color-theme-d
           .text
             flex: 1
-            over-flow: hidden 
+            overflow: hidden
             text-overflow: ellipsis
             white-space: nowrap
+            font-size: $font-size-medium
+            color: $color-text-l
           .like
             extend-click()
             margin-right: 15px
@@ -144,7 +224,7 @@ export default {
         border-radius: 16px
         color: $color-text-l
         font-size: $font-size-medium
-        margin: 30px auto
+        margin: 20px auto
         .icon-add
           font-size: $font-size-small
           margin-right: 4px

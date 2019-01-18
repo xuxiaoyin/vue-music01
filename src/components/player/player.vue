@@ -96,7 +96,7 @@
               <i :class="playCls" class="mini-play"></i>
             </pross-circle>         
           </div>
-          <div class="select" @click="showPlayList">
+          <div class="select" @click.stop="showPlayList">
             <i class="icon-playlist"></i>
           </div>
         </div>
@@ -123,12 +123,13 @@ import animations from 'create-keyframe-animation'
 import ProssBar from 'base/pross-bar/pross-bar'
 import ProssCircle from 'base/pross-circle/pross-circle'
 import {palyMode} from 'common/js/config'
-import {getNutil} from 'common/js/nutil'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import PlayList from 'components/play-list/play-list'
+import{playerMixin} from 'common/js/mixin'
 
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       songReady: false,
@@ -153,17 +154,10 @@ export default {
     precent() {
       return this.currentTime/this.currentSong.duration
     },
-    modeCls() {
-      return this.mode===palyMode.sequence ? 'icon-sequence' : this.mode===palyMode.loop ? 'icon-loop' : 'icon-random'
-    },
     ...mapGetters([
       'fullScreen',
-      'songList',
-      'currentSong',
       'playing',
-      'currentIndex',
-      'mode',
-      'sequenceList'
+      'currentIndex'
     ])
   },
   created () {
@@ -289,24 +283,6 @@ export default {
       this.$refs.cdWrap.style['transform']=''
       this.$refs.cdWrap.style['webkitTransform']=''
     },
-    changeMode() {
-      let mode=(this.mode+1)%3
-      this.setMode(mode)
-      let list=null
-      if(mode===palyMode.random) {
-        list=getNutil(this.sequenceList)
-      }else{
-        list=this.sequenceList
-      }
-      this.resetCurrentIndex(list)
-      this.setSonglist(list) 
-    },
-    resetCurrentIndex(list) {
-      let index=list.findIndex((item)=>{
-        return item.id===this.currentSong.id
-      })
-      this.setCurrentIndex(index)
-    },
     end() {
       if(this.mode===palyMode.loop){
         this.loop()
@@ -424,15 +400,14 @@ export default {
       return num
     },
     ...mapMutations({
-      setFullScreen:'SET_FULLSCREEN',
-      setPlaying:'SET_PLAYING',
-      setCurrentIndex:'SET_CURRENTINDEX',
-      setMode:'SET_MODE',
-      setSonglist:'SET_SONGLIST'
+      setFullScreen:'SET_FULLSCREEN'
     })
   },
   watch: {
     currentSong(newSong,oldSong) {
+      if(!newSong.id){
+        return
+      }
       if(newSong.id===oldSong.id){
         return
       }

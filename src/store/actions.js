@@ -81,3 +81,28 @@ export const removeSeachOne=function({commit},query) {
 export const clearSeach=function({commit}) {
   commit(types.SET_SEACH_HISTORY,clearAll())
 }
+
+export const deletetSong=function({commit,state},song) {
+  let songList=state.songList.slice()
+  let sequenceList=state.sequenceList.slice()
+  let currentIndex=state.currentIndex
+  let fpIndex=findIndex(songList,song)
+  songList.splice(fpIndex,1)
+  if(fpIndex<currentIndex || currentIndex === songList.length) {
+    currentIndex--
+  }
+  let fsIndex=findIndex(sequenceList,song)
+  sequenceList.splice(fsIndex,1)
+  commit(types.SET_SONGLIST,songList)
+  commit(types.SET_SEQUENCELIST,sequenceList)
+  commit(types.SET_CURRENTINDEX,currentIndex)
+  let playmode=songList.length>0
+  commit(types.SET_PLAYING,playmode)
+}
+
+export const deleteList=function({commit}) {
+  commit(types.SET_SONGLIST,[])
+  commit(types.SET_SEQUENCELIST,[])
+  commit(types.SET_CURRENTINDEX,-1)
+  commit(types.SET_PLAYING,false)
+}
