@@ -118,15 +118,15 @@
 
 
 <script>
-import {mapGetters,mapMutations} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProssBar from 'base/pross-bar/pross-bar'
 import ProssCircle from 'base/pross-circle/pross-circle'
-import {palyMode} from 'common/js/config'
+import { palyMode } from 'common/js/config'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import PlayList from 'components/play-list/play-list'
-import{playerMixin} from 'common/js/mixin'
+import{ playerMixin } from 'common/js/mixin'
 
 export default {
   mixins: [playerMixin],
@@ -188,6 +188,7 @@ export default {
     },
     ready() {
       this.songReady=true
+      this.savePlayHistory(this.currentSong)
     },
     prev() {
       if(!this.songReady) {
@@ -401,11 +402,14 @@ export default {
     },
     ...mapMutations({
       setFullScreen:'SET_FULLSCREEN'
-    })
+    }),
+    ...mapActions([
+      'savePlayHistory'
+    ])
   },
   watch: {
     currentSong(newSong,oldSong) {
-      if(!newSong.id){
+      if(!newSong.id || !newSong.url || newSong.id === oldSong.id){
         return
       }
       if(newSong.id===oldSong.id){

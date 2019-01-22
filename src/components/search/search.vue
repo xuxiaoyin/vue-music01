@@ -181,5 +181,9 @@ export default {
             float: right
             line-height: 42px
             font-size: $font-size-small
+  .suggest-wrap
+    position: absolute
+    width: 100%
+    height: 100%
 </style>
 

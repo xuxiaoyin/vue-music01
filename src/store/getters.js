@@ -1,23 +1,33 @@
-export const singer= state => state.singer
+import Song from 'common/js/song'
 
-export const playing= state => state.playing
+export const singer = state => state.singer
 
-export const fullScreen= state => state.fullScreen
+export const playing = state => state.playing
 
-export const mode= state => state.mode
+export const fullScreen = state => state.fullScreen
 
-export const songList= state => state.songList
+export const mode = state => state.mode
 
-export const sequenceList= state => state.sequenceList
+export const songList = state => state.songList
 
-export const currentIndex= state => state.currentIndex
+export const sequenceList = state => state.sequenceList
 
-export const disc= state => state.disc
+export const currentIndex = state => state.currentIndex
 
-export const topList= state => state.topList
-
-export const seachHistory= state => state.seachHistory
-
-export const currentSong= (state) => {
+export const currentSong = (state) => {
   return state.songList[state.currentIndex]||{}
 }
+
+export const disc = state => state.disc
+
+export const topList = state => state.topList
+
+export const seachHistory = state => state.seachHistory
+
+export const playHistory = (state) => {
+  return state.playHistory.map((song) => {
+    return new Song(song)
+  })
+}
+
+

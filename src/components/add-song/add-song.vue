@@ -7,18 +7,34 @@
           <span class="close icon-close" @click="hide"></span>
         </div>
         <div class="search-box-wrap">
-          <seach-box placeholder="搜索歌曲"></seach-box>
+         <seach-box ref="seachBox" @query='onqueryChenge' placeholder="搜索歌曲"></seach-box>
         </div>
-        <div class="switch-wrap">
-          <switches 
-            :switches="switches" 
-            @switch="switchIndex"
-            :currentIndex="currentIndex"
-          >
-          </switches>
+        <div class="no-query" v-show="!query">
+          <div class="switch-wrap">
+            <switches 
+              :switches="switches" 
+              @switch="switchIndex"
+              :currentIndex="currentIndex"
+            >
+            </switches>
+          </div>
+          <div class="list-wrap">
+            <scroll class="lately" :data="playHistory" ref="lately" v-show="currentIndex===0">
+              <song-list :songs="playHistory" ref="songList" @select="selectItems"></song-list>
+            </scroll>
+            <scroll class="search-history" :data="seachHistory" ref="searchHistory" v-show="currentIndex===1">
+              <div class="inner">
+                <history-list 
+                  :seaches="seachHistory" 
+                  @selectOne="addQuery"
+                  @deleteOne="deleteOne"
+                ></history-list>
+              </div> 
+            </scroll>
+          </div>
         </div>
-        <div class="lately">
-          <song-list></song-list>
+        <div class="suggest-wrap" v-show="query">
+          <suggest :query="query" @select="saveHistory" ref="suggest"></suggest>
         </div>
       </div>
     </div>
@@ -29,6 +45,11 @@
 import SeachBox from 'base/seach-box/seach-box'
 import Switches from 'base/switches/switches'
 import SongList from 'base/song-list/song-list'
+import Scroll from 'base/scroll/scroll'
+import HistoryList from 'base/history-list/history-list'
+import Suggest from 'components/suggest/suggest'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data() {
     return {
@@ -41,24 +62,66 @@ export default {
           name: '搜索历史'
         }
       ],
-      currentIndex: 0
+      currentIndex: 0,
+      query: ''
     }
+  },
+  computed: {
+    ...mapGetters([
+      'playHistory',
+      'seachHistory'
+    ])
   },
   methods: {
     show() {
       this.showFlag=true
+      this.refreshList()
     },
     hide() {
       this.showFlag=false
     },
     switchIndex(index) {
       this.currentIndex=index
-    }
+    },
+    refreshList() {
+      setTimeout(() => {
+        if (this.currentIndex === 0) {
+          this.$refs.lately.refresh()
+        } else {
+          this.$refs.searchHistory.refresh()
+        }
+      }, 20)
+    },
+    selectItems(song,index) {
+      if (index!==0) {
+        this.insertSong(song)
+      } 
+    },
+    onqueryChenge(query) {
+      this.query=query
+    },
+    addQuery(query) {
+      this.$refs.seachBox.setquery(query)
+    },
+    deleteOne(item) {
+      this.removeSeachOne(item)
+    },
+    saveHistory() {
+      this.saveSeachHistory(this.query)
+    },
+    ...mapActions([
+      'insertSong',
+      'saveSeachHistory',
+      'removeSeachOne'
+    ])
   },
   components: {
     SeachBox,
     Switches,
-    SongList
+    SongList,
+    Scroll,
+    HistoryList,
+    Suggest
   }
 }
 </script>
@@ -79,6 +142,7 @@ export default {
     transform: translateX(100%)
     opacity: 0
   .add-wrap
+    height: 100%
     .title
       position: relative
       text-align: center
@@ -93,7 +157,25 @@ export default {
         padding: 10px 18px
         font-size: $font-size-large
         color: $color-theme
-    .switch-wrap
-      width: 245px
-      margin: 20px auto
+    .no-query
+      .switch-wrap
+        width: 245px
+        margin: 20px auto 0
+      .list-wrap
+        position: absolute
+        top: 165px
+        bottom: 0
+        width: 100%
+        .lately
+          height: 100%
+          overflow: hidden
+        .search-history
+          height: 100%
+          overflow: hidden
+          .inner
+            padding: 10px 20px
+    .suggest-wrap
+      position: relative
+      height: 100%
+      overflow: hidden
 </style>

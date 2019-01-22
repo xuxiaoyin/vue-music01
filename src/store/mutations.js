@@ -29,7 +29,10 @@ const mutations= {
     state.topList=topList
   },
   [types.SET_SEACH_HISTORY](state,history) {
-    state.seachHistory=history
+    state.seachHistory = history
+  },
+  [types.SET_PLAY_HISTORY](state, playHistory) {
+    state.playHistory = playHistory
   }
 }
 

@@ -147,7 +147,7 @@ export default {
 
 .suggest
   position: absolute
-  top: 60px
+  top: 0
   bottom: 0
   left: 10%
   width: 80%
