@@ -88,6 +88,9 @@ export default {
     showConfirm() {
       this.$refs.confirm.show()
     },
+    saveHistory() {
+      this.saveSeachHistory(this.query)
+    },
     _getHotKey() {
       getHotKey().then((res) => {
         if(res.code===ERR_OK) {
@@ -96,6 +99,7 @@ export default {
       })
     },
     ...mapActions([
+      'saveSeachHistory',
       'clearSeach'
     ])
   },

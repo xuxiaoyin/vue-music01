@@ -27,6 +27,10 @@ export default {
     pullup: {
       type: Boolean,
       dafault: false
+    },
+    delayrefresh: {
+      type: Number,
+      default: 20
     }
   },
   mounted() {
@@ -78,7 +82,7 @@ export default {
     data(){
       setTimeout(()=>{
         this.refresh()
-      },20)
+      },this.delayrefresh)
     }
   }
 }

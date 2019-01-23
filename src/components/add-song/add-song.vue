@@ -34,8 +34,12 @@
           </div>
         </div>
         <div class="suggest-wrap" v-show="query">
-          <suggest :query="query" @select="saveHistory" ref="suggest"></suggest>
+          <suggest :query="query" @select="selectSuggest" ref="suggest"></suggest>
         </div>
+        <top-tip ref="toptip" class="toptip">
+          <i class="icon-ok"></i>
+          <span class="text">1首歌已添加到播放列表</span>
+        </top-tip>
       </div>
     </div>
   </transition>
@@ -48,6 +52,7 @@ import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
 import HistoryList from 'base/history-list/history-list'
 import Suggest from 'components/suggest/suggest'
+import TopTip from 'base/top-tip/top-tip'
 import { mapGetters, mapActions } from 'vuex'
 import { searchMixin } from 'common/js/mixin'
 
@@ -95,9 +100,18 @@ export default {
     selectItems(song,index) {
       if (index!==0) {
         this.insertSong(song)
+        this.showTopTip()
       } 
     },
+    selectSuggest() {
+      this.saveSeachHistory(this.query)
+      this.showTopTip()
+    },
+    showTopTip() {
+      this.$refs.toptip.show()
+    },
     ...mapActions([
+      'saveSeachHistory',
       'insertSong'
     ])
   },
@@ -107,7 +121,8 @@ export default {
     SongList,
     Scroll,
     HistoryList,
-    Suggest
+    Suggest,
+    TopTip
   },
   watch: {
     query(newval) {
@@ -171,4 +186,8 @@ export default {
       position: relative
       height: 100%
       overflow: hidden
+    .toptip
+      font-size: $font-size-medium
+      .text
+        margin-left: 6px
 </style>

@@ -85,14 +85,10 @@ export const searchMixin= {
     onqueryChenge(query) {
       this.query=query
     },
-    saveHistory() {
-      this.saveSeachHistory(this.query)
-    },
     deleteOne(item) {
       this.removeSeachOne(item)
     },
     ...mapActions([
-      'saveSeachHistory',
       'removeSeachOne'
     ])
   }
