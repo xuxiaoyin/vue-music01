@@ -1,15 +1,15 @@
 <template>
   <div class="hisstory-list">
-    <ul class="list">
+    <transition-group class="list" tag="ul" name="list">
       <li class="item" 
-        v-for="(item,index) in seaches" 
-        :key="index" v-show="item" 
+        v-for="item in seaches" 
+        :key="item" v-show="item" 
         @click="selectItem(item)"
       >
         <span class="text">{{item}}</span>
         <span class="icon-delete" @click.stop="deleteOne(item)"></span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -39,6 +39,10 @@ export default {
     height: 36px
     line-height: 32px
     color: $color-text-l
+    &.list-enter-active,&.list-leave-active
+      transition: all 0.1s
+    &.list-enter, &.list-leave-to
+      height: 0
     .text
       float: left 
       width: 80%

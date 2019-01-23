@@ -49,8 +49,10 @@ import Scroll from 'base/scroll/scroll'
 import HistoryList from 'base/history-list/history-list'
 import Suggest from 'components/suggest/suggest'
 import { mapGetters, mapActions } from 'vuex'
+import { searchMixin } from 'common/js/mixin'
 
 export default {
+  mixins: [searchMixin],
   data() {
     return {
       showFlag: false,
@@ -62,14 +64,12 @@ export default {
           name: '搜索历史'
         }
       ],
-      currentIndex: 0,
-      query: ''
+      currentIndex: 0
     }
   },
   computed: {
     ...mapGetters([
-      'playHistory',
-      'seachHistory'
+      'playHistory'
     ])
   },
   methods: {
@@ -97,22 +97,8 @@ export default {
         this.insertSong(song)
       } 
     },
-    onqueryChenge(query) {
-      this.query=query
-    },
-    addQuery(query) {
-      this.$refs.seachBox.setquery(query)
-    },
-    deleteOne(item) {
-      this.removeSeachOne(item)
-    },
-    saveHistory() {
-      this.saveSeachHistory(this.query)
-    },
     ...mapActions([
-      'insertSong',
-      'saveSeachHistory',
-      'removeSeachOne'
+      'insertSong'
     ])
   },
   components: {
@@ -122,6 +108,13 @@ export default {
     Scroll,
     HistoryList,
     Suggest
+  },
+  watch: {
+    query(newval) {
+      if(!newval) {
+        this.refreshList()
+      }
+    }
   }
 }
 </script>

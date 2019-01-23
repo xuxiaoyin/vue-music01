@@ -58,15 +58,14 @@ import {getHotKey} from 'api/seach'
 import {ERR_OK} from 'api/config'
 import {mapActions,mapGetters} from 'vuex'
 import Scroll from 'base/scroll/scroll'
-import { playListMixin } from 'common/js/mixin'
+import { playListMixin, searchMixin } from 'common/js/mixin'
 import Confirm from 'base/confirm/confirm'
 
 export default {
-  mixins: [playListMixin],
+  mixins: [playListMixin, searchMixin],
   data() {
     return {
-      hotkey: [],
-      query: ''
+      hotkey: []
     }
   },
   created() {
@@ -75,10 +74,7 @@ export default {
   computed: {
     newval() {
       return this.hotkey.concat(this.seachHistory)
-    },
-    ...mapGetters([
-      'seachHistory'
-    ])
+    }
   },
   methods: {
     handlePlayList(songList) {
@@ -88,18 +84,6 @@ export default {
 
       this.$refs.suggest.$el.style.bottom=bottom
       this.$refs.suggest.refresh()
-    },
-    addQuery(query) {
-      this.$refs.seachBox.setquery(query)
-    },
-    onqueryChenge(query) {
-      this.query=query
-    },
-    saveHistory() {
-      this.saveSeachHistory(this.query)
-    },
-    deleteOne(item) {
-      this.removeSeachOne(item)
     },
     showConfirm() {
       this.$refs.confirm.show()
@@ -112,8 +96,6 @@ export default {
       })
     },
     ...mapActions([
-      'saveSeachHistory',
-      'removeSeachOne',
       'clearSeach'
     ])
   },

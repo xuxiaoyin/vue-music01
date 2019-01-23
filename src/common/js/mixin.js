@@ -1,6 +1,6 @@
-import {mapGetters,mapMutations} from 'vuex'
-import {palyMode} from 'common/js/config'
-import {getNutil} from 'common/js/nutil'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { palyMode } from 'common/js/config'
+import { getNutil } from 'common/js/nutil'
 
 //playListMixin 迷你播放器出现的时候重置botttom值和scroll的refresh
 export const playListMixin={
@@ -64,5 +64,36 @@ export const playerMixin={
       setMode:'SET_MODE',
       setSonglist:'SET_SONGLIST'
     })
+  }
+}
+
+export const searchMixin= {
+  data() {
+    return {
+      query: ''
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'seachHistory'
+    ])
+  },
+  methods: {
+    addQuery(query) {
+      this.$refs.seachBox.setquery(query)
+    },
+    onqueryChenge(query) {
+      this.query=query
+    },
+    saveHistory() {
+      this.saveSeachHistory(this.query)
+    },
+    deleteOne(item) {
+      this.removeSeachOne(item)
+    },
+    ...mapActions([
+      'saveSeachHistory',
+      'removeSeachOne'
+    ])
   }
 }
