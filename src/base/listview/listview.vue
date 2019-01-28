@@ -218,7 +218,6 @@ export default {
     background: $color-background-d
     text-align: center
     border-radius: 10px
-    z-index: 9999
     .right-item
       line-height: 14px
       font-size: 9px

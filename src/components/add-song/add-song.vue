@@ -19,10 +19,10 @@
             </switches>
           </div>
           <div class="list-wrap">
-            <scroll class="lately" :data="playHistory" ref="lately" v-show="currentIndex===0">
+            <scroll class="lately" :data="playHistory" ref="lately" v-show="currentIndex===0" :delayrefresh="delayrefresh">
               <song-list :songs="playHistory" ref="songList" @select="selectItems"></song-list>
             </scroll>
-            <scroll class="search-history" :data="seachHistory" ref="searchHistory" v-show="currentIndex===1">
+            <scroll class="search-history" :data="seachHistory" ref="searchHistory" v-show="currentIndex===1" :delayrefresh="delayrefresh">
               <div class="inner">
                 <history-list 
                   :seaches="seachHistory" 
@@ -69,7 +69,8 @@ export default {
           name: '搜索历史'
         }
       ],
-      currentIndex: 0
+      currentIndex: 0,
+      delayrefresh: 200
     }
   },
   computed: {

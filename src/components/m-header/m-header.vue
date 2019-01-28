@@ -2,6 +2,9 @@
   <div class="m-heaader">
     <span class="logo"></span>
     <span class="text">Chicken Music</span>
+    <router-link tag="span" class="mine" to="/user">
+      <i class="icon-mine"></i>
+    </router-link>
   </div>
 </template>
 
@@ -36,5 +39,17 @@ export default {
     display: inline-block
     vertical-align: top
     font-size: $font-size-large-x
+  .mine
+    position: absolute
+    top: 0
+    right: 0
+    height: 44px
+    line-height: 44px
+    width: 40px
+    text-align: center
+    .icon-mine
+      line-height: 44px
+      font-size: 24px
+      color: $color-theme
 
 </style>
