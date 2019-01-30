@@ -1,5 +1,5 @@
 import { palyMode } from 'common/js/config'
-import { loadSearch, loadPlay } from 'common/js/catch'
+import { loadSearch, loadPlay, localFavourite } from 'common/js/catch'
 
 const state={
   singer:{},
@@ -12,7 +12,8 @@ const state={
   disc:{},
   topList:[],
   seachHistory: loadSearch(),
-  playHistory: loadPlay()
+  playHistory: loadPlay(),
+  favouriteList: localFavourite()
 }
 
 export default state

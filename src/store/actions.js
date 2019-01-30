@@ -1,7 +1,7 @@
 import * as types from './mutation-types'
 import { getNutil } from 'common/js/nutil'
 import { palyMode } from 'common/js/config'
-import { seachHistory, removeSeach, clearAll, savePlay } from 'common/js/catch'
+import { seachHistory, removeSeach, clearAll, savePlay, addFavourite, deleteFavourite } from 'common/js/catch'
 
 function findIndex(list,song) {
   return list.findIndex((item) => {
@@ -109,4 +109,12 @@ export const deleteList=function({commit}) {
 
 export const savePlayHistory = function ({commit}, song) {
   commit(types.SET_PLAY_HISTORY, savePlay(song))
+}
+
+export const favourite = function ({commit}, song) {
+  commit(types.SET_FAVOURITE, addFavourite(song))
+}
+
+export const nofavourite = function ({commit}, song) {
+  commit(types.SET_FAVOURITE, deleteFavourite(song))
 }

@@ -72,8 +72,8 @@
             <div class="icon icon-right" :class="disableCls">
               <i class="icon-next" @click="next"></i>
             </div>
-            <div class="icon icon-right">
-              <i class="icon-not-favorite"></i>
+            <div class="icon icon-right" @click="changeFav(currentSong)">
+              <i :class="favCls(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -604,6 +604,10 @@ export default {
           font-size: 28px
           &.disable
             color: $color-text-l
+          .icon-not-favorite
+            color: $color-theme
+          .icon-favorite
+            color: $color-sub-theme
         .icon-center
           font-size: 40px
           text-align: center

@@ -17,8 +17,8 @@
             >
               <i class="current" :class="getIconCls(item)"></i>
               <span class="text">{{item.name}}</span>
-              <span class="like">
-                <i class="icon icon-not-favorite"></i>
+              <span class="like" @click.stop="changeFav(item)">
+                <i class="icon" :class="favCls(item)"></i>
               </span>
               <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon icon-delete"></i>
@@ -213,6 +213,8 @@ export default {
             color: $color-theme
             .icon-favorite
               color: $color-sub-theme
+            .icon-not-favorite
+              color: $color-theme
           .delete
             extend-click()
             font-size: $font-size-small

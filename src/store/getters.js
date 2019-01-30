@@ -30,4 +30,11 @@ export const playHistory = (state) => {
   })
 }
 
+export const favouriteList = (state) => {
+  return state.favouriteList.map((song) => {
+    return new Song(song)
+  })
+}
+
+
 
