@@ -184,9 +184,11 @@ export default {
       return `${minit}:${second}`
     },
     error() {
+      clearTimeout(this.timer)
       this.songReady=true //保证网络请求错误之后能正常操作
     },
     ready() {
+      clearTimeout(this.timer)
       this.songReady=true
       this.savePlayHistory(this.currentSong)
     },
@@ -196,13 +198,14 @@ export default {
       }
       if(this.songList.length===1) {
         this.loop()
+        return
       }else {
         let index=this.currentIndex-1
         if(index===-1) {
           index=this.songList.length-1
         }
         this.setCurrentIndex(index)
-        this.songReady=false
+        //this.songReady=false
         if(!this.playing) {
           this.toogelPlay()
         }
@@ -214,13 +217,14 @@ export default {
       }
       if(this.songList.length===1) {
         this.loop()
+        return
       }else {
         let index=this.currentIndex+1
         if(index===this.songList.length) {
           index=0
         }
         this.setCurrentIndex(index)
-        this.songReady=false
+        //this.songReady=false
         if(!this.playing) {
           this.toogelPlay()
         }
@@ -300,6 +304,9 @@ export default {
     },
     getLyric() {
       this.currentSong.getLyric().then( (lyric)=> {
+        if (this.currentSong.lyric !== lyric) {
+          return
+        }
         this.currentLyric=new Lyric(lyric,this.handlerLyric)
         if(this.playing) {
           this.currentLyric.play()
@@ -415,10 +422,12 @@ export default {
       if(newSong.id===oldSong.id){
         return
       }
+      this.songReady = false
       if(this.currentLyric) {
         this.currentLyric.stop()
       }
-      setTimeout( ()=>{
+      clearTimeout(this.timer)
+      this.timer=setTimeout( ()=>{
         this.$refs.audio.play()
         this.getLyric()
       },1000)
