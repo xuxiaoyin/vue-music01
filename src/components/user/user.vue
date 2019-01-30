@@ -23,7 +23,10 @@
             <song-list :songs="playHistory" ref="songList" @select="selectItems"></song-list>
           </scroll>
       </div>
-
+      
+      <div class="no-result" v-show="noresult">
+        <no-result :title="title"></no-result>
+      </div>
     </div>
   </transition>
 </template>
@@ -32,11 +35,12 @@
 import Switches from 'base/switches/switches'
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+import NoResult from 'base/no-result/no-result'
 import { mapGetters, mapActions } from 'vuex'
 import { playListMixin } from 'common/js/mixin'
 
 export default {
-  mixins: ['playListMixin'],
+  mixins: [playListMixin],
   data() {
     return {
       switches: [
@@ -48,6 +52,20 @@ export default {
     }
   },
   computed: {
+    noresult() {
+      if(this.currentIndex===0) {
+        return !this.favouriteList.length
+      } else {
+        return !this.playHistory.length
+      }        
+    },
+    title() {
+      if(this.currentIndex===0) {
+        return '暂无收藏歌曲'
+      } else {
+        return '您还没有听过歌曲'
+      }        
+    },
     ...mapGetters([
       'playHistory',
       'favouriteList'
@@ -82,6 +100,9 @@ export default {
       this.refresh()
     },
     radomPlay() {
+      if(this.noresult) {
+        return
+      }
       if(this.currentIndex===0) {
         this.redomPlay({
           list: this.favouriteList
@@ -99,7 +120,8 @@ export default {
   components: {
     Switches,
     Scroll,
-    SongList
+    SongList,
+    NoResult
   }
 }
 </script>
